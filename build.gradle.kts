@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "2.4.1"
-    
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
@@ -17,6 +16,12 @@ repositories {
 }
 
 dependencies {
+
+    //database connectivity and management
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
+    implementation("org.postgresql:postgresql:42.2.24.jre7")
+
+
     implementation("org.springframework.boot:spring-boot-starter-web:2.5.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
