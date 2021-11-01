@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
+    kotlin("kapt") version "1.5.31"
+
 }
 
 group = "com.andrei"
@@ -21,7 +23,7 @@ dependencies {
     //moshi
     implementation ("com.squareup.moshi:moshi:$moshiVersion")
     implementation ("com.squareup.moshi:moshi-adapters:$moshiVersion")
-
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
     //jwt
     implementation("com.auth0:java-jwt:3.18.2")
 

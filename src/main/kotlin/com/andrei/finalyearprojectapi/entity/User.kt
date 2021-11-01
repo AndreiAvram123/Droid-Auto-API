@@ -3,9 +3,11 @@ package com.andrei.finalyearprojectapi.entity
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.entity.enums.UserRoleConverter
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.squareup.moshi.JsonClass
 import javax.persistence.*
 
 @Entity(name = "users")
+@JsonClass(generateAdapter = true)
 class User (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

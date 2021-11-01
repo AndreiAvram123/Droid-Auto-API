@@ -8,7 +8,9 @@ import com.andrei.finalyearprojectapi.response.LoginResponse
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -17,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.stereotype.Component
+import java.util.stream.Collectors
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -49,15 +52,18 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager
     private lateinit var keyRefreshToken:String
 
 
-    override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
-        val applicationUser = ObjectMapper().readValue(request?.inputStream, User::class.java)
-        return authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken(
-                applicationUser.username,
-                applicationUser.password,
-                emptyList()
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse?): Authentication? {
+        val requestBody = request.reader.lines().collect(Collectors.joining())
+         val moshi = Moshi.Builder().build()
+         val adaptor = moshi.adapter(User::class.java)
+        val user:User = adaptor.fromJson(requestBody)!!
+            return authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken(
+                    user.username,
+                    user.password,
+                    emptyList()
+                )
             )
-        )
     }
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
