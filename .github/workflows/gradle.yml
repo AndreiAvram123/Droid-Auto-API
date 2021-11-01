@@ -30,10 +30,16 @@ jobs:
     - name: Test variable
       run : echo "$GITHUB_REF"
 
+    - name : Set environment variables
+      if: ${{env.$GITHUB_REF == 'refs/heads/master'}}
+      run : |
+         echo "::set-env name=collection::10471783-2682b409-5169-4e2d-9a65-6c0b74f57573"
+
     - uses: actions/checkout@master
     - uses: matt-ball/newman-action@master
+
       with:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
-        collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
+        collection: $collection
         environment: 10471783-4f2f1481-bb2d-46e0-8080-abf57bf5bfee
 
