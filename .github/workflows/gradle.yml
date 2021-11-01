@@ -26,4 +26,6 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-      
+
+    - name: "Hello world when it's Monday"
+        run: echo "$GITHUB_REF"
