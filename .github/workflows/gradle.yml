@@ -29,26 +29,3 @@ jobs:
       run: ./gradlew build
 
 
-    - uses: actions/checkout@master
-
-    - if: endsWith(github.ref, '/master')
-      uses: matt-ball/newman-action@master
-      with:
-        apiKey: ${{ secrets.POSTMAN_API_KEY }}
-        collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
-        environment: 10471783-9043de12-5af7-4f5e-80d3-f288bbc74fa4
-
-
-    - if: endsWith(github.ref, '/develop')
-      uses: matt-ball/newman-action@master
-      with:
-         apiKey: ${{ secrets.POSTMAN_API_KEY }}
-         collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
-         environment: 10471783-4f2f1481-bb2d-46e0-8080-abf57bf5bfee
-
-    - if: endsWith(github.ref, '/release')
-      uses: matt-ball/newman-action@master
-      with:
-        apiKey: ${{ secrets.POSTMAN_API_KEY }}
-        collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
-        environment: 10471783-7efa5f1d-09cc-4d95-a2e7-046cf8efc1f2
