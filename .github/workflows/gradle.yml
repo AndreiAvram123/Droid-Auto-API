@@ -27,11 +27,9 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Test variable
-      run : echo "$GITHUB_REF"
 
     - name : Check if master
-      if: ${{env.GITHUB_REF == 'refs/heads/master'}}
+      if: endsWith(github.ref, '/master')
       run : |
          echo "::set-env name=collection::10471783-2682b409-5169-4e2d-9a65-6c0b74f57573"
 
