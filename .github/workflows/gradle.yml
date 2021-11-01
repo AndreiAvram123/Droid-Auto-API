@@ -36,8 +36,8 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Use postman on master
-      if: endsWith(github.ref, '/master')
     - uses: matt-ball/newman-action@master
+      if: endsWith(github.ref, '/master')
       with:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
         collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
