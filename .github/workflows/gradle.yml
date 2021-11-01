@@ -28,16 +28,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name : Check if master
-      if: endsWith(github.ref, '/master')
-      run : |
-         echo "::set-env name=collection::10471783-2682b409-5169-4e2d-9a65-6c0b74f57573"
 
-
-
-    - name: Use postman on master
-    - uses: matt-ball/newman-action@master
-    - uses: actions/checkout@master
+     -uses: actions/checkout@master
+     -uses: matt-ball/newman-action@master
       if: endsWith(github.ref, '/master')
       with:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
