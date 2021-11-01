@@ -32,7 +32,6 @@ jobs:
 
     - uses: actions/checkout@master
     - uses: matt-ball/newman-action@master
-      if : ${{env.GITHUB_REF == 'refs/heads/master'}}
       with:
         apiKey: ${{ secrets.POSTMAN_API_KEY }}
         collection: 10471783-2682b409-5169-4e2d-9a65-6c0b74f57573
