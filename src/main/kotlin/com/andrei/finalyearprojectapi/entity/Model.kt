@@ -11,5 +11,8 @@ class Model(
 
 
     @Column(name = "model_name")
-    var name:String = ""
+    var name:String = "",
+
+    @Column(name = "manufacturer_name")
+    var manufacturerName:String = ""
 )
