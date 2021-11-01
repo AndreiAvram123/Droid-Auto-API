@@ -16,6 +16,17 @@ repositories {
 }
 
 dependencies {
+    val moshiVersion = "1.12.0"
+
+    //moshi
+    implementation ("com.squareup.moshi:moshi:$moshiVersion")
+    implementation ("com.squareup.moshi:moshi-adapters:$moshiVersion")
+
+    //jwt
+    implementation("com.auth0:java-jwt:3.18.2")
+
+    //security
+    implementation("org.springframework.boot:spring-boot-starter-security:2.5.5")
 
     //database connectivity and management
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
