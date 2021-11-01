@@ -27,6 +27,8 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Test variable
+      run : echo "$GITHUB_REF"
 
     - uses: actions/checkout@master
     - uses: matt-ball/newman-action@master
