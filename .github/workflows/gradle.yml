@@ -24,8 +24,8 @@ jobs:
         cache: gradle
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Grant
+      run:  echo "$GITHUB_REF"
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: "Hello world when it's Monday"
-        run: echo "$GITHUB_REF"
