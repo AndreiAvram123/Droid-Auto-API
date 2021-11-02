@@ -18,12 +18,10 @@ repositories {
 }
 
 dependencies {
-    val moshiVersion = "1.12.0"
 
-    //moshi
-    implementation ("com.squareup.moshi:moshi:$moshiVersion")
-    implementation ("com.squareup.moshi:moshi-adapters:$moshiVersion")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+    implementation ("com.google.code.gson:gson:2.8.9")
+
+
     //jwt
     implementation("com.auth0:java-jwt:3.18.2")
 

@@ -2,7 +2,10 @@ package com.andrei.finalyearprojectapi.security
 
 import com.andrei.finalyearprojectapi.authentication.ApplicationUseDetailsService
 import com.andrei.finalyearprojectapi.filters.authentication.AuthenticationFilter
+import com.andrei.finalyearprojectapi.repositories.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.BeanIds
@@ -16,22 +19,27 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
+
 @EnableWebSecurity
 class SecurityConfiguration(
     private val applicationUserDetailsService: ApplicationUseDetailsService,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val userRepository: UserRepository
 ) :WebSecurityConfigurerAdapter(
 
 ){
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER])
-    @Throws(Exception::class)
-    override fun authenticationManagerBean(): AuthenticationManager? {
+    override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
 
+    @Autowired
+    @Lazy
+    private lateinit var authenticationFilter: AuthenticationFilter
+
     override fun configure(http: HttpSecurity?) {
         http!!.cors().and().csrf().disable()
-            .addFilter(AuthenticationFilter(authenticationManager()))
+            .addFilter(authenticationFilter)
             .sessionManagement()?.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
     }

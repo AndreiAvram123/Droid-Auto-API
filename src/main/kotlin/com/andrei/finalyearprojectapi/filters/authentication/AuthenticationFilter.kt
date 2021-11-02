@@ -7,10 +7,8 @@ import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.response.LoginResponse
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.okResponse
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapter
+import com.andrei.finalyearprojectapi.utils.writeJsonResponse
+import com.google.gson.Gson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -31,39 +29,32 @@ import kotlin.time.ExperimentalTime
  */
 @OptIn(ExperimentalTime::class)
 @Component
-class AuthenticationFilter(authenticationManager: AuthenticationManager
+class AuthenticationFilter(
+    authenticationManager: AuthenticationManager,
+    private val userRepository: UserRepository,
+    @Value("\${accessToken.durationSeconds}")
+    private val durationAccessToken:Long = 0,
+    @Value("\${accessToken.encryptionKey}")
+    private val keyAccessToken:String,
+    @Value("\${refreshToken.durationSeconds}")
+    private var durationRefreshToken:Long = 0,
+    @Value("\${refreshToken.encryptionKey}")
+    private val keyRefreshToken:String
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Value("\${accessToken.durationSeconds}")
-
-    private var durationAccessToken:Long = 0
-    @Value("\${accessToken.encryptionKey}")
-
-    private lateinit var keyAccessToken:String
-
-    @Value("\${refreshToken.durationSeconds}")
-    private var durationRefreshToken:Long = 0
-
-    @Value("\${refreshToken.encryptionKey}")
-    private lateinit var keyRefreshToken:String
 
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse?): Authentication? {
         val requestBody = request.reader.lines().collect(Collectors.joining())
-         val moshi = Moshi.Builder().build()
-         val adaptor = moshi.adapter(User::class.java)
-        val user:User = adaptor.fromJson(requestBody)!!
-            return authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(
-                    user.username,
-                    user.password,
-                    emptyList()
-                )
+        val gson = Gson()
+        val user:User = gson.fromJson(requestBody,User::class.java)!!
+        return authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                user.username,
+                user.password,
+                emptyList()
             )
+        )
     }
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
@@ -72,16 +63,14 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager
         val user = userRepository.findTopByUsername(userUsername)
         user?.let{
             response?.apply {
-                writeResponse(
-                    createSuccessfulResponse(user)
+                writeJsonResponse(
+                    okResponse(createLoginResponse(user))
                 )
-
             }
         }
     }
 
-
-    private fun createSuccessfulResponse(user: User): ResponseWrapper<LoginResponse>{
+    private fun createLoginResponse(user: User): LoginResponse{
         val accessToken = EncryptedJWTToken(
             user = user,
             duration = Duration.Companion.seconds(durationAccessToken),
@@ -92,23 +81,13 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager
             duration = Duration.Companion.seconds(durationRefreshToken),
             encryptionKey = keyRefreshToken
         ).rawValue
-        return okResponse(
-            LoginResponse(
-                accessToken = accessToken,
-                refreshToken = refreshToken
-            )
+
+        return LoginResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken
         )
+
     }
 
-    /**
-     * Helper method to write a json object into
-     * the servlet response
-     */
-    private fun HttpServletResponse.writeResponse(response:ResponseWrapper<LoginResponse>){
-        val moshi = Moshi.Builder().build()
-        val adapter =  moshi.adapter(ApiResponse::class.java)
-        this.writer.write(adapter.toJson(response.body))
-        this.contentType = MediaType.APPLICATION_JSON_VALUE
-    }
 
 }
