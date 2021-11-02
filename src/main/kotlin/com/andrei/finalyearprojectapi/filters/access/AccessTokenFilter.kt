@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.configuration.ApiResponse
-import com.andrei.finalyearprojectapi.configuration.annotations.RequireAccessToken
+import com.andrei.finalyearprojectapi.configuration.annotations.NoTokenRequired
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest
 class AccessTokenFilter : SecurityFilter {
 
     override fun shouldCheckFilter(request:HttpServletRequest):Boolean{
-        return request.endpointHasAnnotation<RequireAccessToken>()
+        return !request.endpointHasAnnotation<NoTokenRequired>()
     }
 
     override fun isFilterPassed(request:HttpServletRequest): Boolean {
