@@ -29,7 +29,9 @@ fun <T> okResponse(data: T? = null) : ResponseWrapper<T> = ResponseEntity.ok(Api
  */
  inline fun <reified T>HttpServletResponse.writeJsonResponse(response: ResponseWrapper<T>){
     val gson = Gson()
-    this.writer.write(gson.toJson(response.body))
-    this.contentType = MediaType.APPLICATION_JSON_VALUE
-    this.status = response.statusCode.value()
+    apply {
+        writer.write(gson.toJson(response.body))
+        contentType = MediaType.APPLICATION_JSON_VALUE
+        status = response.statusCode.value()
+    }
 }

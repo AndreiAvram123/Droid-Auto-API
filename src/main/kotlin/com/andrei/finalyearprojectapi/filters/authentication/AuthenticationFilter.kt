@@ -58,7 +58,6 @@ class AuthenticationFilter(
     }
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
-
         val userUsername = (authResult?.principal as org.springframework.security.core.userdetails.User).username
         val user = userRepository.findTopByUsername(userUsername)
         user?.let{

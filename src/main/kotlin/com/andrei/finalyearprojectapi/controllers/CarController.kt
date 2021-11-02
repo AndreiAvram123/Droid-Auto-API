@@ -1,5 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.configuration.annotations.RequireAccessToken
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
@@ -13,6 +14,7 @@ class CarController(
 ) {
 
     @GetMapping("/nearby")
+    @RequireAccessToken
     fun getNearbyCars():ResponseWrapper<List<Car>>{
         return okResponse(
             carRepository.findAll()
