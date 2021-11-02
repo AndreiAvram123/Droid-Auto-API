@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
+    kotlin("kapt") version "1.5.31"
+
 }
 
 group = "com.andrei"
@@ -16,6 +18,15 @@ repositories {
 }
 
 dependencies {
+
+    implementation ("com.google.code.gson:gson:2.8.9")
+
+
+    //jwt
+    implementation("com.auth0:java-jwt:3.18.2")
+
+    //security
+    implementation("org.springframework.boot:spring-boot-starter-security:2.5.5")
 
     //database connectivity and management
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
