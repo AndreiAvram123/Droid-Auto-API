@@ -1,17 +1,13 @@
 package com.andrei.finalyearprojectapi.filters.authentication
 
-import EncryptedJWTToken
-import com.andrei.finalyearprojectapi.configuration.ApiResponse
+
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.response.LoginResponse
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
 import com.google.gson.Gson
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.MediaType
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -21,7 +17,6 @@ import java.util.stream.Collectors
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 /**
@@ -32,14 +27,7 @@ import kotlin.time.ExperimentalTime
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
     private val userRepository: UserRepository,
-    @Value("\${accessToken.durationSeconds}")
-    private val durationAccessToken:Long = 0,
-    @Value("\${accessToken.encryptionKey}")
-    private val keyAccessToken:String,
-    @Value("\${refreshToken.durationSeconds}")
-    private var durationRefreshToken:Long = 0,
-    @Value("\${refreshToken.encryptionKey}")
-    private val keyRefreshToken:String
+    private val jwtTokenUtility: JWTTokenUtility
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
 
@@ -70,16 +58,8 @@ class AuthenticationFilter(
     }
 
     private fun createLoginResponse(user: User): LoginResponse{
-        val accessToken = EncryptedJWTToken(
-            user = user,
-            duration = Duration.Companion.seconds(durationAccessToken),
-            encryptionKey = keyAccessToken
-        ).rawValue
-        val refreshToken = EncryptedJWTToken(
-            user = user,
-            duration = Duration.Companion.seconds(durationRefreshToken),
-            encryptionKey = keyRefreshToken
-        ).rawValue
+        val accessToken = jwtTokenUtility.generateAccessToken(user).rawValue
+        val refreshToken = jwtTokenUtility.generateRefreshToken(user).rawValue
 
         return LoginResponse(
             accessToken = accessToken,

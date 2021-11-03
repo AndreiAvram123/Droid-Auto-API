@@ -1,6 +1,7 @@
 package com.andrei.finalyearprojectapi.filters
 
 import com.andrei.finalyearprojectapi.filters.access.AccessTokenFilter
+import com.andrei.finalyearprojectapi.filters.access.AdminTokenFilter
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -13,10 +14,12 @@ abstract  class FilterManger : OncePerRequestFilter(){
 }
 @Component
 class FilterManagerImpl(
-    accessTokenFilter: AccessTokenFilter
+    accessTokenFilter: AccessTokenFilter,
+    adminTokenFilter: AdminTokenFilter
 ) : FilterManger() {
     //the order in which filters are added matters
-    override val filters: List<SecurityFilter> = listOf(accessTokenFilter)
+    override val filters: List<SecurityFilter> = listOf(accessTokenFilter,
+    adminTokenFilter)
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -41,6 +44,6 @@ class FilterManagerImpl(
         }
     }
 
-    private fun HttpServletRequest.shouldCheckFilter(filter:SecurityFilter) = filter.shouldCheckFilter(this)
+
 
 }

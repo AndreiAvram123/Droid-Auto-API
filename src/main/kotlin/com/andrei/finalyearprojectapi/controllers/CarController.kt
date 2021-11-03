@@ -1,6 +1,5 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.configuration.annotations.NoTokenRequired
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
