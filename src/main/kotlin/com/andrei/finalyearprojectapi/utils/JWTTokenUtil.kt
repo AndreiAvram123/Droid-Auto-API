@@ -1,12 +1,8 @@
 
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.enums.UserRole
-import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -14,7 +10,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 fun HttpServletRequest.getAccessToken():String?{
-    return getHeader("Authorization")
+    return getHeader(JWTToken.headerName)
 }
 
 
@@ -22,8 +18,11 @@ fun HttpServletRequest.getAccessToken():String?{
 
 
 abstract class JWTToken {
-    protected val token_prefix = "Bearer "
-    protected val userIDKey = "userID"
+    companion object {
+        const val tokenPrefix = "Bearer "
+        const val headerName = "Authorization"
+        const val userIDKey = "userID"
+    }
 }
 
 
@@ -39,7 +38,7 @@ class DecodedJwt(token: String,
         val verifier = JWT.require(Algorithm.HMAC512(decryptionKey.toByteArray()))
             .build()
         try {
-            return verifier.verify(token.replace(token_prefix,""))
+            return verifier.verify(token.replace(tokenPrefix,""))
         }   catch (e:Exception){
             return null
         }

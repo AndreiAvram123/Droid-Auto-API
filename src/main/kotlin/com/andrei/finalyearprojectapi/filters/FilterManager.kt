@@ -44,6 +44,6 @@ class FilterManagerImpl(
         }
     }
 
-    private fun HttpServletRequest.shouldCheckFilter(filter:SecurityFilter) = filter.shouldCheckFilter(this)
+
 
 }

@@ -2,14 +2,11 @@ package com.andrei.finalyearprojectapi.filters.access
 
 
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.filters.shouldCheckFilter
 import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
-import com.andrei.finalyearprojectapi.utils.notAcceptable
-import org.aspectj.lang.annotation.Before
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import org.mockito.Spy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mock.web.MockHttpServletRequest
@@ -26,57 +23,42 @@ class AccessTokenFilterTest{
     @Autowired
     private lateinit var jwtTokenUtility: JWTTokenUtility
 
+   private var mockRequest = MockHttpServletRequest(
+        null,
+        RequestMethod.GET.name,
+        "/test"
+    )
+
      @BeforeEach
      fun setUp(){
          accessTokenFilter= spy(accessTokenFilter)
+         mockRequest =  MockHttpServletRequest()
+         `when`(mockRequest.shouldCheckFilter(accessTokenFilter)).thenReturn(true)
     }
 
 
     @Test
-    fun `Given null access token the filter will not pass`(){
-        accessTokenFilter= spy(accessTokenFilter)
-        val request = MockHttpServletRequest(
-            null,
-            RequestMethod.GET.name,
-            "/test"
-        )
+    fun `Given no access token header the filter should not pass`(){
+        assert(!accessTokenFilter.isFilterPassed(mockRequest))
+    }
 
-        `when`(accessTokenFilter.shouldCheckFilter(request)).thenReturn(true)
-
-        assert(!accessTokenFilter.isFilterPassed(request))
+    @Test
+    fun `Given null access token the filter should not pass`(){
+        mockRequest.addHeader(JWTToken.headerName,"null")
+        `when`(mockRequest.shouldCheckFilter(accessTokenFilter)).thenReturn(true)
+        assert(!accessTokenFilter.isFilterPassed(mockRequest))
     }
     @Test
-    fun `Given invalid access token the filter will not pass`(){
-        accessTokenFilter= spy(accessTokenFilter)
-        val request = MockHttpServletRequest(
-            null,
-            RequestMethod.GET.name,
-            "/test"
-        )
-        request.apply {
-            addHeader("Authorization","Bearer sdfsdf")
-        }
-
-        `when`(accessTokenFilter.shouldCheckFilter(request)).thenReturn(true)
-
-        assert(!accessTokenFilter.isFilterPassed(request))
+    fun `Given invalid access token the filter should not pass`(){
+        mockRequest.addHeader(JWTToken.headerName,"Bearer sdfsdf")
+        assert(!accessTokenFilter.isFilterPassed(mockRequest))
     }
+
 
     @Test
     fun `Given valid access token the filter will pass`(){
-        accessTokenFilter= spy(accessTokenFilter)
-        val request = MockHttpServletRequest(
-            null,
-            RequestMethod.GET.name,
-            "/test"
-        )
         val token = jwtTokenUtility.generateAccessToken(User()).rawValue
-        request.apply {
-            addHeader("Authorization","Bearer $token")
-        }
-
-        `when`(accessTokenFilter.shouldCheckFilter(request)).thenReturn(true)
-
-        assert(accessTokenFilter.isFilterPassed(request))
+        mockRequest.addHeader("Authorization","Bearer $token")
+        assert(accessTokenFilter.isFilterPassed(mockRequest))
     }
 }

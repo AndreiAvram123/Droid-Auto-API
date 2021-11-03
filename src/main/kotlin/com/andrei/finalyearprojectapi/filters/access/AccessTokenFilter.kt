@@ -18,9 +18,10 @@ class AccessTokenFilter(
     private val jwtTokenUtility: JWTTokenUtility
 ) : SecurityFilter {
 
-    override fun shouldCheckFilter(request:HttpServletRequest):Boolean{
+    override fun shouldCheckRequest(request:HttpServletRequest):Boolean{
         return !request.endpointHasAnnotation<NoTokenRequired>()
     }
+
 
     override fun isFilterPassed(request:HttpServletRequest): Boolean {
         val token = request.getAccessToken() ?: return false
