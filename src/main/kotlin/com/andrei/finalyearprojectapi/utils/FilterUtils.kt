@@ -15,19 +15,6 @@ val controllers:List<KClass<out Any>> = listOf(
    CarController::class
 )
 
-fun HttpServletResponse.sendNotAuthenticated(){
-    sendError(401)
-}
-fun HttpServletResponse.sendNotAuthorised(){
-    sendError(403)
-}
-fun HttpServletResponse.sendTooManyRequests(){
-    sendError(HttpStatus.TOO_MANY_REQUESTS.value())
-}
-fun HttpServletResponse.sendRequireValidateIP(){
-    sendError(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED.value())
-}
-
  fun KAnnotatedElement.getRequestMethodWithPath(controllerPrefixPath:String):RequestMethodWithPath{
     val getAnnotation = findAnnotation<GetMapping>()
     val postAnnotation = findAnnotation<PostMapping>()

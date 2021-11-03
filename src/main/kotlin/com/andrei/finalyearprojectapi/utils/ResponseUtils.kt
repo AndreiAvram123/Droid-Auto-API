@@ -23,6 +23,11 @@ fun <T> notAcceptable(error: String):ResponseWrapper<T> =
 
 fun <T> okResponse(data: T? = null) : ResponseWrapper<T> = ResponseEntity.ok(ApiResponse.Success(data))
 
+fun <T> notAuthorized():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
+
+fun <T> notAuthenticated():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.Error(ResponseMessages.errorNotAuthenticated))
+
+
 /**
  * Helper method to write a json object into
  * the servlet response
