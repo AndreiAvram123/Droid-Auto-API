@@ -8,6 +8,7 @@ import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.notAcceptable
 import com.andrei.finalyearprojectapi.utils.okResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,7 +21,8 @@ class AuthController(
 ) {
 
     @PostMapping("/register")
-    fun register(@RequestBody userRequest: UserRegisterRequest): ResponseWrapper<User> {
+    fun register(@RequestBody
+                 userRequest: UserRegisterRequest): ResponseWrapper<User> {
         val user = userRequest.toUser(passwordEncoder)
         if(isNewUserValid(user)) {
             userRepository.save(user)
@@ -43,6 +45,5 @@ class AuthController(
     companion object{
         const val errorUsernameExists = "Username already exists"
         const val errorEmailAlreadyExists = "Email already exists"
-        const val invalidRefreshToken = "Invalid refresh token"
     }
 }

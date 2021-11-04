@@ -2,6 +2,7 @@ package com.andrei.finalyearprojectapi.filters.authentication
 
 
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.response.LoginResponse
 import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
@@ -32,17 +33,17 @@ class AuthenticationFilter(
 
 
 
-    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse?): Authentication? {
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication? {
         val requestBody = request.reader.lines().collect(Collectors.joining())
         val gson = Gson()
-        val user:User = gson.fromJson(requestBody,User::class.java)!!
+        val user: User = gson.fromJson(requestBody, User::class.java) ?: throw InvalidJsonException()
         return authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken(
-                user.username,
-                user.password,
-                emptyList()
+                UsernamePasswordAuthenticationToken(
+                    user.username,
+                    user.password,
+                    emptyList()
+                )
             )
-        )
     }
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {

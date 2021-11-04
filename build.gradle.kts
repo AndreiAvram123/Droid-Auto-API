@@ -19,6 +19,11 @@ repositories {
 
 dependencies {
 
+
+    //validation
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.5.6")
+
+
     implementation ("com.google.code.gson:gson:2.8.9")
 
 
@@ -26,18 +31,18 @@ dependencies {
     implementation("com.auth0:java-jwt:3.18.2")
 
     //security
-    implementation("org.springframework.boot:spring-boot-starter-security:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-security:2.5.6")
 
     //database connectivity and management
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.5")
-    implementation("org.postgresql:postgresql:42.2.24.jre7")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.6")
+    implementation("org.postgresql:postgresql:42.3.1")
 
 
-    implementation("org.springframework.boot:spring-boot-starter-web:2.5.5")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.5.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.5")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.6")
 
     testImplementation ("org.mockito:mockito-core:4.0.0")
 }

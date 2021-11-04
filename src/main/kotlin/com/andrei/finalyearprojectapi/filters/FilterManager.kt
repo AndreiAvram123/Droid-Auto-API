@@ -1,8 +1,11 @@
 package com.andrei.finalyearprojectapi.filters
 
+import com.andrei.finalyearprojectapi.configuration.exception.ExceptionHandler
 import com.andrei.finalyearprojectapi.filters.access.AccessTokenFilter
 import com.andrei.finalyearprojectapi.filters.access.AdminTokenFilter
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -26,19 +29,22 @@ class FilterManagerImpl(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+
         var filtersPassed = true
         for(filter in filters) {
             if (request.shouldCheckFilter(filter)) {
                 if (!filter.isFilterPassed(request)) {
-                    response.writeJsonResponse(
-                        filter.generateErrorResponse()
-                    )
-                    filtersPassed = false
-                    break
-                }
+                        response.writeJsonResponse(
+                            filter.generateErrorResponse()
+                        )
+                        filtersPassed = false
+                        break
+                    }
+
             }
         }
         //if all filters passed continue the request flow
+
         if(filtersPassed) {
             filterChain.doFilter(request, response)
         }
