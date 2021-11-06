@@ -36,7 +36,11 @@ class AuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication? {
         val requestBody = request.reader.lines().collect(Collectors.joining())
         val gson = Gson()
-        val user: User = gson.fromJson(requestBody, User::class.java) ?: throw InvalidJsonException()
+        val user =  try {
+             gson.fromJson(requestBody, User::class.java)!!
+        }catch (e:Exception){
+            throw InvalidJsonException()
+        }
         return authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
                     user.username,

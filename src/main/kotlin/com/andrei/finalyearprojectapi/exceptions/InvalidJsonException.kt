@@ -3,5 +3,7 @@ package com.andrei.finalyearprojectapi.exceptions
 import java.lang.Exception
 
 class InvalidJsonException : Exception(){
-       val errorMessage = "Invalid json"
+       companion object {
+              const val errorMessage = "Invalid json"
+       }
 }

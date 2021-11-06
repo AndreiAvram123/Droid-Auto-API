@@ -6,6 +6,7 @@ import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
+import com.andrei.finalyearprojectapi.utils.writeJsonResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -25,10 +26,18 @@ class ExceptionHandler : ResponseEntityExceptionHandler(){
     fun <T> handleConflict(exception: Exception, request:HttpServletRequest, response: HttpServletResponse){
          when(exception){
              is RegisterException ->{
-                 response.sendError(HttpStatus.CONFLICT.value(),exception.registrationMessage)
+                 response.writeJsonResponse<String>(
+                     badRequest(
+                         exception.registrationMessage
+                     )
+                 )
              }
              is InvalidJsonException -> {
-                  response.sendError(HttpStatus.BAD_REQUEST.value(),exception.errorMessage)
+                 response.writeJsonResponse<String>(
+                     badRequest(
+                         InvalidJsonException.errorMessage
+                     )
+                 )
              }
 
          }
