@@ -7,7 +7,6 @@ import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.notAuthorized
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
@@ -19,10 +18,9 @@ abstract class AdminTokenFilter : SecurityFilter
  *
  */
 @Component
-class AdminTokenFilterImpl :AdminTokenFilter() {
-
-    @Autowired
-    lateinit var userDataObject: UserDataObject
+class AdminTokenFilterImpl(
+    private val userDataObject: UserDataObject
+) :AdminTokenFilter() {
 
     override fun shouldCheckRequest(request: HttpServletRequest): Boolean  = request.endpointHasAnnotation<AdminTokenRequired>()
 

@@ -4,28 +4,21 @@ import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.filters.UserDataObject
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.mock.web.MockHttpServletRequest
 
-@SpringBootTest
 class AdminTokenFilterTest{
 
     var request = MockHttpServletRequest()
 
-    @Autowired
-    private lateinit var adminTokenFilter: AdminTokenFilter
+    private val userDataObject:UserDataObject = UserDataObject()
 
-    @MockBean
-    private lateinit var userDataObject: UserDataObject
+    private val adminTokenFilter: AdminTokenFilter = AdminTokenFilterImpl(
+        userDataObject = userDataObject
+    )
 
-    @BeforeEach
-    fun setUp(){
-        request = MockHttpServletRequest()
-    }
+
+
 
     @AfterEach
     fun tearDown(){
