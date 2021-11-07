@@ -36,7 +36,6 @@ class AccessTokenFilter(
         {
              val user:User = userRepository.findTopById(decodedToken.userID) ?: return false
               userDataObject.user = user
-              userDataObject.decodedToken = decodedToken
              return true
         }else{
             return false

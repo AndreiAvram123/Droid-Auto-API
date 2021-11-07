@@ -2,22 +2,14 @@ package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
-import com.andrei.finalyearprojectapi.filters.shouldCheckFilter
-import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
-import org.junit.jupiter.api.Assertions.*
+import com.andrei.finalyearprojectapi.filters.UserDataObject
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.test.context.web.WebAppConfiguration
 
 @SpringBootTest
 class AdminTokenFilterTest{
@@ -27,37 +19,41 @@ class AdminTokenFilterTest{
     @Autowired
     private lateinit var adminTokenFilter: AdminTokenFilter
 
-    @Autowired
-    private lateinit var jwtTokenUtility: JWTTokenUtility
-
+    @MockBean
+    private lateinit var userDataObject: UserDataObject
 
     @BeforeEach
     fun setUp(){
         request = MockHttpServletRequest()
-        adminTokenFilter = spy(adminTokenFilter)
-        `when`(request.shouldCheckFilter(adminTokenFilter)).thenReturn(true)
+    }
+
+    @AfterEach
+    fun tearDown(){
+        userDataObject.apply {
+            user = null
+        }
     }
 
     @Test
     fun `Given user role token the filter should not pass`(){
-        val user = User(role = UserRole.USER)
-        val token = jwtTokenUtility.generateAccessToken(user).rawValue
-        request.addHeader(JWTToken.headerName,token)
+         userDataObject.apply {
+             user = User(role = UserRole.USER)
+         }
         assert(!adminTokenFilter.isFilterPassed(request))
     }
     @Test
-    fun `Given unknown role token the filter should not pass`(){
-        val user = User(role = UserRole.UNKNOWN)
-        val token = jwtTokenUtility.generateAccessToken(user).rawValue
-        request.addHeader(JWTToken.headerName,token)
+    fun `Given token with user role  the filter should not pass`(){
+        userDataObject.apply {
+            user = User(role = UserRole.UNKNOWN)
+        }
         assert(!adminTokenFilter.isFilterPassed(request))
     }
 
     @Test
     fun `Given admin role token the filter should  pass`(){
-        val user = User(id = 1, role = UserRole.ADMIN)
-        val token = jwtTokenUtility.generateAccessToken(user).rawValue
-        request.addHeader(JWTToken.headerName,token)
+        userDataObject.apply {
+            user = User(role = UserRole.ADMIN)
+        }
         assert(adminTokenFilter.isFilterPassed(request))
     }
 }

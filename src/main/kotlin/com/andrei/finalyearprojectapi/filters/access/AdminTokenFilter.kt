@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletRequest
 
 abstract class AdminTokenFilter : SecurityFilter
 
+/**
+ * Filter used in order to determine if the user is authorized to access
+ * the specific admin resource
+ *
+ */
 @Component
 class AdminTokenFilterImpl :AdminTokenFilter() {
 
