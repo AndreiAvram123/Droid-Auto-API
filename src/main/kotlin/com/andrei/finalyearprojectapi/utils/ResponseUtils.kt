@@ -25,6 +25,8 @@ fun <T> okResponse(data: T? = null) : ResponseWrapper<T> = ResponseEntity.ok(Api
 
 fun <T> notAuthorized():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
 
+fun <T> newLoginDevice():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
+
 fun <T> notAuthenticated():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.Error(ResponseMessages.errorNotAuthenticated))
 
 

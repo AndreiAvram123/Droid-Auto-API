@@ -10,15 +10,19 @@ plugins {
 }
 
 group = "com.andrei"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    maven {
+        setUrl( "https://mymavenrepo.com/repo/v2xm7gYVinuWT46Px3Xy/")
+    }
 }
 
 dependencies {
 
+    val mockkVersion = "1.12.0"
 
     //validation
     implementation("org.springframework.boot:spring-boot-starter-validation:2.5.6")
@@ -37,14 +41,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.5.6")
     implementation("org.postgresql:postgresql:42.3.1")
 
+    //coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+
 
     implementation("org.springframework.boot:spring-boot-starter-web:2.5.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.6")
-
-    testImplementation ("org.mockito:mockito-core:4.0.0")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks.withType<KotlinCompile> {

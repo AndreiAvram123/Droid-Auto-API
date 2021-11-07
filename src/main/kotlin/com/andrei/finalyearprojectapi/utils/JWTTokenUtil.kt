@@ -26,12 +26,13 @@ abstract class JWTToken {
 }
 
 
-class DecodedJwt(token: String,
+open class DecodedJwt(token: String,
                  private val decryptionKey:String ): JWTToken() {
     private val decodedJWT: DecodedJWT? = decodeToken(token)
     val userID:Long? = decodedJWT?.getClaim(userIDKey)?.asLong()
 
-    fun isValid() = decodedJWT?.subject != null && userID != null
+    open fun isPayloadValid():Boolean = decodedJWT?.subject  != null && userID != null
+
 
 
     private fun decodeToken(token:String): DecodedJWT?{
@@ -47,7 +48,7 @@ class DecodedJwt(token: String,
 }
 
 @OptIn(ExperimentalTime::class)
-class EncryptedJWTToken constructor(user:User,
+open class EncryptedJWTToken constructor(user:User,
                                     private val encryptionKey:String,
                                     private val duration: Duration) : JWTToken() {
 

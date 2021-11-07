@@ -3,33 +3,29 @@ package com.andrei.finalyearprojectapi.filters.access
 import com.andrei.finalyearprojectapi.configuration.annotations.AdminTokenRequired
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
-import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
+import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.notAuthorized
-import getAccessToken
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
-abstract class AdminTokenFilter(jwtTokenUtility: JWTTokenUtility) : AccessTokenFilter(jwtTokenUtility)
+abstract class AdminTokenFilter : SecurityFilter
 
+/**
+ * Filter used in order to determine if the user is authorized to access
+ * the specific admin resource
+ *
+ */
 @Component
 class AdminTokenFilterImpl(
-    private val jwtTokenUtility: JWTTokenUtility
-):AdminTokenFilter(jwtTokenUtility) {
+    private val userDataObject: UserDataObject
+) :AdminTokenFilter() {
 
     override fun shouldCheckRequest(request: HttpServletRequest): Boolean  = request.endpointHasAnnotation<AdminTokenRequired>()
 
     override fun isFilterPassed(request: HttpServletRequest): Boolean {
-        val token = request.getAccessToken() ?: return false
-
-        if(!super.isFilterPassed(request)){
-            return false
-        }
-
-        val decodedToken = jwtTokenUtility.decodeAccessToken(token)
-        return  jwtTokenUtility.getUserRoleFromToken(decodedToken) == UserRole.ADMIN
-
+        return  userDataObject.user?.role == UserRole.ADMIN
     }
 
     override fun generateErrorResponse(): ResponseWrapper<String>  = notAuthorized()
