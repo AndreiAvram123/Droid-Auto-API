@@ -31,6 +31,8 @@ class AuthController(
     }
 
 
+
+
     private fun isNewUserValid(user:User):Boolean{
         userRepository.findTopByUsername(user.username)?.let {
             throw RegisterException(registrationMessage = errorUsernameExists)

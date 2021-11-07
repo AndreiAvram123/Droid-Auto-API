@@ -31,7 +31,7 @@ class DecodedJwt(token: String,
     private val decodedJWT: DecodedJWT? = decodeToken(token)
     val userID:Long? = decodedJWT?.getClaim(userIDKey)?.asLong()
 
-    fun isValid() = decodedJWT?.subject != null && userID != null
+    fun isPayloadValid():Boolean = decodedJWT?.subject  != null && userID != null
 
 
     private fun decodeToken(token:String): DecodedJWT?{

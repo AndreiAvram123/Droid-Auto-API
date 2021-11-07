@@ -19,4 +19,6 @@ class User (
     var password:String = "",
     @Convert(converter = UserRoleConverter::class)
     var role:UserRole = UserRole.USER,
+    @OneToMany
+    var ipAddresses:MutableList<IpAddress> = mutableListOf()
 )
