@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.filters.access
 
-import com.andrei.finalyearprojectapi.configuration.annotations.NoTokenRequired
+import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
 import com.andrei.finalyearprojectapi.filters.UserDataObject
@@ -10,21 +10,19 @@ import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.notAuthenticated
 import getAccessToken
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
 @Component
 class AccessTokenFilter(
     private val jwtTokenUtility: JWTTokenUtility,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private  var userDataObject: UserDataObject
 ) : SecurityFilter {
 
-    @Autowired
-    private lateinit var userDataObject: UserDataObject
 
     override fun shouldCheckRequest(request:HttpServletRequest):Boolean{
-        return !request.endpointHasAnnotation<NoTokenRequired>()
+        return !request.endpointHasAnnotation<NoAuthenticationRequired>()
     }
 
 
@@ -32,9 +30,9 @@ class AccessTokenFilter(
         val token = request.getAccessToken() ?: return false
         val decodedToken = jwtTokenUtility.decodeAccessToken(token)
 
-        if (decodedToken.isPayloadValid() && decodedToken.userID != null)
+        if (decodedToken.isPayloadValid())
         {
-             val user:User = userRepository.findTopById(decodedToken.userID) ?: return false
+             val user:User = userRepository.findTopById(decodedToken.userID!!) ?: return false
               userDataObject.user = user
              return true
         }else{
