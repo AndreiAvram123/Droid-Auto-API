@@ -1,32 +1,39 @@
 package com.andrei.finalyearprojectapi.filters.access
 
 
+import DecodedJwt
 import JWTToken
 import com.andrei.finalyearprojectapi.configuration.TestDetails
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
+import io.mockk.coEvery
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.mockito.MockitoAnnotations
 import org.springframework.mock.web.MockHttpServletRequest
 
 
-@SpringBootTest
 class AccessTokenFilterTest{
 
-    @Autowired
-    private lateinit var accessTokenFilter: AccessTokenFilter
-
-    @Autowired
-    private lateinit var jwtTokenUtility: JWTTokenUtility
 
 
-    @MockBean
-    private lateinit var userRepository: UserRepository
+    private val jwtTokenUtility: JWTTokenUtility = mockk(relaxed = true)
+
+    private val userRepository: UserRepository = mockk(relaxed = true)
+
+    private val  accessTokenFilter: AccessTokenFilter = AccessTokenFilter(
+        jwtTokenUtility,
+        userRepository,
+        UserDataObject()
+    )
+
+    init {
+        MockitoAnnotations.openMocks(this)
+    }
+
 
      private var mockRequest = MockHttpServletRequest()
 
@@ -35,7 +42,10 @@ class AccessTokenFilterTest{
      @BeforeEach
      fun setUp(){
          mockRequest =  MockHttpServletRequest()
-         `when`(userRepository.findTopById(testUser.id)).thenReturn(testUser)
+         coEvery {
+             userRepository.findTopById(testUser.id)
+         }returns testUser
+         accessTokenFilter
     }
 
 
@@ -58,8 +68,21 @@ class AccessTokenFilterTest{
 
     @Test
     fun `Given valid access token the filter will pass`(){
-        val token = jwtTokenUtility.generateAccessToken(testUser).rawValue
-        mockRequest.addHeader("Authorization","Bearer $token")
+
+        val rawToken ="${JWTToken.tokenPrefix} token"
+        val decodedJwt:DecodedJwt = mockk(relaxed = true)
+
+        coEvery {
+            jwtTokenUtility.decodeAccessToken(rawToken)
+        } returns decodedJwt
+
+        coEvery {
+            decodedJwt.isPayloadValid()
+        } returns true
+
+
+        mockRequest.addHeader(JWTToken.headerName, rawToken)
+
         assert(accessTokenFilter.isFilterPassed(mockRequest))
     }
 }

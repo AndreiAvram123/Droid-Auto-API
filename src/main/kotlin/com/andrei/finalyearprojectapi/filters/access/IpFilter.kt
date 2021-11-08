@@ -1,28 +1,39 @@
 package com.andrei.finalyearprojectapi.filters.access
 
+import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
 import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
-import org.springframework.beans.factory.annotation.Autowired
+import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
+import com.andrei.finalyearprojectapi.utils.newLoginDevice
+import com.example.demo.configuration.getForwardedHeader
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class IpFilter() : SecurityFilter {
+class IpFilter(
+    private val userDataObject: UserDataObject
+) : SecurityFilter {
 
 
-    @Autowired
-    lateinit var userDataObject: UserDataObject
 
-    override fun shouldCheckRequest(request: HttpServletRequest): Boolean  = true
+    override fun shouldCheckRequest(request: HttpServletRequest): Boolean {
+        return !request.endpointHasAnnotation<NoAuthenticationRequired>()
+    }
 
 
     override fun isFilterPassed(request: HttpServletRequest): Boolean {
-        val allowedIps = userDataObject.user?.ipAddresses
-        return true
+        //todo
+        //might not work
+        val allowedIps = userDataObject.user?.ipAddresses ?: return false
+        val requestIP = request.getForwardedHeader() ?: request.remoteAddr
+        allowedIps.find { it.value == requestIP }?.let {
+            return true
+        }
+        return false
     }
 
     override fun generateErrorResponse(): ResponseWrapper<String> {
-        TODO("Not yet implemented")
+          return newLoginDevice()
     }
 }
