@@ -1,14 +1,14 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.UserRegisterRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
+import com.andrei.finalyearprojectapi.services.EmailService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
-import com.andrei.finalyearprojectapi.utils.notAcceptable
 import com.andrei.finalyearprojectapi.utils.okResponse
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AuthController(
     private val userRepository: UserRepository,
-    private val passwordEncoder: BCryptPasswordEncoder
+    private val passwordEncoder: BCryptPasswordEncoder,
+    private val emailService: EmailService
 ) {
 
     @PostMapping("/register")
@@ -30,6 +31,12 @@ class AuthController(
         return okResponse(user)
     }
 
+    @NoAuthenticationRequired
+    @PostMapping("/registeredDevices")
+    fun registerNewDevice():ResponseWrapper<Nothing>{
+         emailService.sendTestEmail()
+         return okResponse()
+    }
 
 
 
