@@ -40,7 +40,7 @@ class AuthController(
     @GetMapping("/emailValid")
     fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<Nothing>{
          userRepository.findTopByEmail(email) ?: return okResponse()
-         return badRequest(errorEmailAlreadyExists)
+         return badRequest(errorEmailAlreadyUsed)
     }
 
 
@@ -52,7 +52,7 @@ class AuthController(
             throw RegisterException(registrationMessage = errorUsernameExists)
         }
         userRepository.findTopByEmail(user.email)?.let {
-            throw RegisterException(registrationMessage = errorEmailAlreadyExists)
+            throw RegisterException(registrationMessage = errorEmailAlreadyUsed)
         }
         return true
     }
@@ -60,6 +60,6 @@ class AuthController(
 
     companion object{
         const val errorUsernameExists = "Username already exists"
-        const val errorEmailAlreadyExists = "Email already exists"
+        const val errorEmailAlreadyUsed = "Email already used"
     }
 }
