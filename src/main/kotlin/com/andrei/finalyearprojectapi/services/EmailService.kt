@@ -19,7 +19,7 @@ class EmailService(
 
     private val sendGrid = SendGrid(apiKey)
 
-    fun sendTestEmail(){
+    fun sendConfirmatinEmail(){
         val request = Request()
         val from = Email(fromIdentity)
         val subject = "Sending with SendGrid is Fun"
