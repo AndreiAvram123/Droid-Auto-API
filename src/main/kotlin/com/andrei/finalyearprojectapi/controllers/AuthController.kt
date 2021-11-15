@@ -8,11 +8,10 @@ import com.andrei.finalyearprojectapi.request.auth.UserRegisterRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.services.EmailService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class AuthController(
@@ -34,9 +33,17 @@ class AuthController(
     @NoAuthenticationRequired
     @PostMapping("/registeredDevices")
     fun registerNewDevice():ResponseWrapper<Nothing>{
-         emailService.sendTestEmail()
          return okResponse()
     }
+
+    @NoAuthenticationRequired
+    @GetMapping("/emailValid")
+    fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<Nothing>{
+         userRepository.findTopByEmail(email) ?: return okResponse()
+         return badRequest(errorEmailAlreadyExists)
+    }
+
+
 
 
 

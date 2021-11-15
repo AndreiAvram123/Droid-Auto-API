@@ -26,7 +26,7 @@ dependencies {
 
 
     //email service
-    implementation ("com.sendgrid:sendgrid-java:4.7.6")
+    implementation ("com.sendgrid:sendgrid-java:4.8.0")
 
 
     //validation
