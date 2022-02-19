@@ -10,6 +10,7 @@ import com.andrei.finalyearprojectapi.services.EmailService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
+import com.sendgrid.helpers.mail.objects.Email
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 
@@ -30,11 +31,6 @@ class AuthController(
         return okResponse(user)
     }
 
-    @NoAuthenticationRequired
-    @PostMapping("/registeredDevices")
-    fun registerNewDevice():ResponseWrapper<Nothing>{
-         return okResponse()
-    }
 
     @NoAuthenticationRequired
     @GetMapping("/emailValid")
@@ -43,6 +39,15 @@ class AuthController(
          return badRequest(errorEmailAlreadyUsed)
     }
 
+
+    @NoAuthenticationRequired
+    @GetMapping("/test")
+    fun test():ResponseWrapper<Nothing>{
+        emailService.sendConfirmationEmail(
+            to = Email("andreia@apadmi.com")
+        )
+        return okResponse();
+    }
 
 
 
