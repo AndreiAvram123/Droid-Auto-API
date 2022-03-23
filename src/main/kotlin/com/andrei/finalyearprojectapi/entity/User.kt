@@ -14,6 +14,7 @@ class User (
     var id:Long = 0,
     @Column(name = "username")
     var username:String = "",
+    @Column(nullable = false)
     var email:String = "",
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     var password:String = "",

@@ -22,7 +22,6 @@ class JWTTokenUtility(
 ){
 
     fun decodeAccessToken(token:String):DecodedJwt = DecodedJwt(token,encryptionKeyAccessToken)
-    fun decodeRefreshToken(token:String):DecodedJwt = DecodedJwt(token,encryptionKeyRefreshToken)
 
     fun generateAccessToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyAccessToken, Duration.seconds(durationAccessToken))
     fun generateRefreshToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyRefreshToken,Duration.seconds(durationRefreshToken))

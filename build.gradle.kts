@@ -24,6 +24,11 @@ dependencies {
 
     val mockkVersion = "1.12.0"
 
+
+    //email service
+    implementation ("com.sendgrid:sendgrid-java:4.8.0")
+
+
     //validation
     implementation("org.springframework.boot:spring-boot-starter-validation:2.5.6")
 
