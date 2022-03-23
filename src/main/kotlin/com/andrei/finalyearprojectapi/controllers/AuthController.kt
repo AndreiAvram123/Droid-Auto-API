@@ -4,7 +4,7 @@ import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthentication
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.request.auth.UserRegisterRequest
+import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.services.EmailService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
@@ -28,7 +28,7 @@ class AuthController(
     @Throws(RegisterException::class)
     fun register(@RequestBody
                  @Valid
-                 userRequest: UserRegisterRequest): ResponseWrapper<User> {
+                 userRequest: RegisterUserRequest): ResponseWrapper<User> {
         val user = userRequest.toUser(passwordEncoder)
         if(isNewUserValid(user)) {
             userRepository.save(user)
