@@ -1,9 +1,15 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+
+
 
 plugins {
     id("org.springframework.boot") version "2.6.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("kapt") version "1.5.32"
+    kotlin("jvm") version "1.6.10"
+    kotlin("plugin.spring") version "1.6.20-RC2"
+    kotlin("kapt") version "1.6.10"
 
 }
 
@@ -54,6 +60,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.4")
     testImplementation("io.mockk:mockk:$mockkVersion")
+
+
+}
+tasks.withType<JavaCompile>{
+     inputs.files(tasks.processResources)
+
 }
 
 tasks.withType<KotlinCompile> {

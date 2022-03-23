@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "accessToken.durationSeconds",
+      "type": "java.lang.String",
+      "description": "Description for accessToken.durationSeconds."
+    },
+    {
+      "name": "accessToken.encryptionKey",
+      "type": "java.lang.String",
+      "description": "Description for accessToken.encryptionKey."
+    }
+  ]
+}
