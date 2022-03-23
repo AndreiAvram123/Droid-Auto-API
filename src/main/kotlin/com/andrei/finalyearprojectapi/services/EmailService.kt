@@ -20,12 +20,12 @@ class EmailService(
     private val sendGrid = SendGrid(apiKey)
     private val confirmationEmailTemplateID = "d-ee08b950a5fa42ce8da56874f06e76aa"
 
-    fun sendConfirmationEmail(
+    fun sendVerificationEmail(
         to:Email
     ){
 
         val mail = Mail().apply {
-            subject = "Let's test this"
+            subject = "Verify your email"
             templateId = confirmationEmailTemplateID
             from = Email(fromIdentity)
         }
@@ -42,7 +42,6 @@ class EmailService(
         }
         try{
           val response = sendGrid.api(request)
-            print(response.statusCode)
         }catch (e:Exception){
             print(e)
         }

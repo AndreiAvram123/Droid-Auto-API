@@ -12,9 +12,13 @@ import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.sendgrid.helpers.mail.objects.Email
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
+
 
 @RestController
+@Validated
 class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
@@ -22,15 +26,20 @@ class AuthController(
 ) {
 
     @PostMapping("/register")
+    @NoAuthenticationRequired
     fun register(@RequestBody
+                 @Valid
                  userRequest: UserRegisterRequest): ResponseWrapper<User> {
         val user = userRequest.toUser(passwordEncoder)
         if(isNewUserValid(user)) {
             userRepository.save(user)
         }
+        //send a verification email after successfully registered
+        emailService.sendVerificationEmail(
+            to = Email(userRequest.email)
+        )
         return okResponse(user)
     }
-
 
     @NoAuthenticationRequired
     @GetMapping("/emailValid")
@@ -40,10 +49,9 @@ class AuthController(
     }
 
 
-    @NoAuthenticationRequired
-    @GetMapping("/test")
+    @GetMapping("/sendVerificationEmail")
     fun test():ResponseWrapper<Nothing>{
-        emailService.sendConfirmationEmail(
+        emailService.sendVerificationEmail(
             to = Email("andreia@apadmi.com")
         )
         return okResponse();
@@ -59,6 +67,7 @@ class AuthController(
         userRepository.findTopByEmail(user.email)?.let {
             throw RegisterException(registrationMessage = errorEmailAlreadyUsed)
         }
+
         return true
     }
 

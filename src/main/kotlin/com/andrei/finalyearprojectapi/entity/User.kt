@@ -14,8 +14,14 @@ class User (
     var id:Long = 0,
     @Column(name = "username")
     var username:String = "",
+    @Column(name = "firstName", nullable = false)
+    var firstName:String = "",
+    @Column(name = "lastName", nullable = false)
+    var lastName:String = "",
     @Column(nullable = false)
     var email:String = "",
+    @Column(nullable = false)
+    var emailVerified:Boolean = false,
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     var password:String = "",
     @Convert(converter = UserRoleConverter::class)

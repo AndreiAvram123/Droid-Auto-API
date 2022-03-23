@@ -13,7 +13,7 @@ import kotlin.time.ExperimentalTime
 class JWTTokenUtility(
     @Value("\${accessToken.durationSeconds}")
     private val durationAccessToken:Long,
-    @Value("\${accessToken.encryptionKey}")
+    @Value(",\${accessToken.encryptionKey}")
     private val encryptionKeyAccessToken:String,
     @Value("\${refreshToken.durationSeconds}")
     private var durationRefreshToken:Long,

@@ -1,6 +1,8 @@
 package com.andrei.finalyearprojectapi.response
 
 data class LoginResponse(
-    val accessToken:String,
-    val refreshToken:String
+    val isEmailVerified:Boolean,
+    var accessToken:String? = null,
+    var refreshToken:String? = null
 )
+
