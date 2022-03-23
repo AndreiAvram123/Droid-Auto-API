@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.4.1"
+    id("org.springframework.boot") version "2.6.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
-    kotlin("kapt") version "1.5.31"
+    kotlin("kapt") version "1.6.10"
 
 }
 
@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
 
-    val mockkVersion = "1.12.2"
+    val mockkVersion = "1.12.3"
 
 
     //email service
@@ -30,7 +30,7 @@ dependencies {
 
 
     //validation
-    implementation("org.springframework.boot:spring-boot-starter-validation:2.6.3")
+    implementation("org.springframework.boot:spring-boot-starter-validation:2.6.4")
 
 
     implementation ("com.google.code.gson:gson:2.9.0")
@@ -40,21 +40,21 @@ dependencies {
     implementation("com.auth0:java-jwt:3.18.3")
 
     //security
-    implementation("org.springframework.boot:spring-boot-starter-security:2.6.3")
+    implementation("org.springframework.boot:spring-boot-starter-security:2.6.4")
 
     //database connectivity and management
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.3")
-    implementation("org.postgresql:postgresql:42.3.2")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.4")
+    implementation("org.postgresql:postgresql:42.3.3")
 
     //coroutines
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
 
 
-    implementation("org.springframework.boot:spring-boot-starter-web:2.6.3")
+    implementation("org.springframework.boot:spring-boot-starter-web:2.6.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.3")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.4")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 

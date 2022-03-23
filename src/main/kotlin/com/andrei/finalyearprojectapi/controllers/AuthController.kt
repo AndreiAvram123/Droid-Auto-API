@@ -12,13 +12,11 @@ import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.sendgrid.helpers.mail.objects.Email
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 
 @RestController
-@Validated
 class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
@@ -27,6 +25,7 @@ class AuthController(
 
     @PostMapping("/register")
     @NoAuthenticationRequired
+    @Throws(RegisterException::class)
     fun register(@RequestBody
                  @Valid
                  userRequest: UserRegisterRequest): ResponseWrapper<User> {
@@ -60,6 +59,7 @@ class AuthController(
 
 
 
+    @Throws(RegisterException::class)
     private fun isNewUserValid(user:User):Boolean{
         userRepository.findTopByUsername(user.username)?.let {
             throw RegisterException(registrationMessage = errorUsernameExists)
