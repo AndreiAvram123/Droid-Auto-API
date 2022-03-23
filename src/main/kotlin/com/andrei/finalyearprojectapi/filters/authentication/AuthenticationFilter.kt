@@ -18,12 +18,10 @@ import java.util.stream.Collectors
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.time.ExperimentalTime
 
 /**
  * Filter used in order to log in a user
  */
-@OptIn(ExperimentalTime::class)
 @Component
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
@@ -63,13 +61,17 @@ class AuthenticationFilter(
     }
 
     private fun createLoginResponse(user: User): LoginResponse{
-        val accessToken = jwtTokenUtility.generateAccessToken(user).rawValue
-        val refreshToken = jwtTokenUtility.generateRefreshToken(user).rawValue
 
-        return LoginResponse(
-            accessToken = accessToken,
-            refreshToken = refreshToken
+        val loginResponse = LoginResponse(
+            isEmailVerified = user.emailVerified
         )
+        if(user.emailVerified){
+            loginResponse.apply {
+                accessToken =   jwtTokenUtility.generateAccessToken(user).rawValue
+                refreshToken =   jwtTokenUtility.generateRefreshToken(user).rawValue
+            }
+        }
+        return  loginResponse;
 
     }
 

@@ -4,14 +4,17 @@ import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthentication
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.request.auth.UserRegisterRequest
+import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.services.EmailService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
+import com.sendgrid.helpers.mail.objects.Email
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
+
 
 @RestController
 class AuthController(
@@ -21,19 +24,20 @@ class AuthController(
 ) {
 
     @PostMapping("/register")
+    @NoAuthenticationRequired
+    @Throws(RegisterException::class)
     fun register(@RequestBody
-                 userRequest: UserRegisterRequest): ResponseWrapper<User> {
+                 @Valid
+                 userRequest: RegisterUserRequest): ResponseWrapper<User> {
         val user = userRequest.toUser(passwordEncoder)
         if(isNewUserValid(user)) {
             userRepository.save(user)
         }
+        //send a verification email after successfully registered
+        emailService.sendVerificationEmail(
+            to = Email(userRequest.email)
+        )
         return okResponse(user)
-    }
-
-    @NoAuthenticationRequired
-    @PostMapping("/registeredDevices")
-    fun registerNewDevice():ResponseWrapper<Nothing>{
-         return okResponse()
     }
 
     @NoAuthenticationRequired
@@ -44,9 +48,18 @@ class AuthController(
     }
 
 
+    @GetMapping("/sendVerificationEmail")
+    fun test():ResponseWrapper<Nothing>{
+        emailService.sendVerificationEmail(
+            to = Email("andreia@apadmi.com")
+        )
+        return okResponse();
+    }
 
 
 
+
+    @Throws(RegisterException::class)
     private fun isNewUserValid(user:User):Boolean{
         userRepository.findTopByUsername(user.username)?.let {
             throw RegisterException(registrationMessage = errorUsernameExists)
@@ -54,6 +67,7 @@ class AuthController(
         userRepository.findTopByEmail(user.email)?.let {
             throw RegisterException(registrationMessage = errorEmailAlreadyUsed)
         }
+
         return true
     }
 

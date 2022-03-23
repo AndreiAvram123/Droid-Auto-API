@@ -14,6 +14,7 @@ typealias ResponseWrapper<T> = ResponseEntity<ApiResponse<T>>
 fun  <T> badRequest(error:String): ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.Error(error))
 
+
 fun  <T> noContent(error:String): ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.Error(error))
 
