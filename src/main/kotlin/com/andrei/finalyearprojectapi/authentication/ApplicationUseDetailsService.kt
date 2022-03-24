@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.authentication
 
-import org.springframework.security.core.userdetails.User
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -18,9 +18,9 @@ class ApplicationUseDetailsService(
      * be phone number, email etc
      */
     override fun loadUserByUsername(username: String): UserDetails {
-       val user = userRepository.findTopByUsername(username)
+       val user = userRepository.findTopByEmail(username)
         user?.let{
-           return User(it.username,it.password, emptyList())
+           return User(it.email,it.password, emptyList())
         }
         throw UsernameNotFoundException(username)
     }

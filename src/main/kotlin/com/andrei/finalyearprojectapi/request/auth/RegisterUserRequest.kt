@@ -9,8 +9,6 @@ data class RegisterUserRequest(
        val firstName:String = "",
         @field:NotBlank(message = "Last name should not be blank")
         val lastName:String = "",
-       @field:NotBlank(message = "Username should not be blank")
-        val username:String = "",
        @field:NotBlank(message = "Email should not be blank")
         val email :String ="",
        @field:NotBlank(message = "Email should not be blank")
@@ -19,7 +17,6 @@ data class RegisterUserRequest(
 )
 
 fun RegisterUserRequest.toUser(passwordEncoder: BCryptPasswordEncoder) = User(
-                username = username,
                 firstName = firstName,
                 lastName = lastName,
                 email =  email,

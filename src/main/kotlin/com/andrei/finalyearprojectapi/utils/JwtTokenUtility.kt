@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
 
 package com.andrei.finalyearprojectapi.utils
 
@@ -8,7 +7,6 @@ import com.andrei.finalyearprojectapi.entity.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 
 
 @Component
@@ -25,8 +23,8 @@ class JWTTokenUtility(
 
     fun decodeAccessToken(token:String):DecodedJwt = DecodedJwt(token,encryptionKeyAccessToken)
 
-    fun generateAccessToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyAccessToken, seconds(durationAccessToken))
-    fun generateRefreshToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyRefreshToken, seconds(durationRefreshToken))
+    fun generateAccessToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyAccessToken, durationAccessToken.seconds)
+    fun generateRefreshToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyRefreshToken, durationRefreshToken.seconds)
 
 
 }

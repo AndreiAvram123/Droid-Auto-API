@@ -41,7 +41,7 @@ class AuthenticationFilter(
         }
         return authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(
-                    user.username,
+                    user.email,
                     user.password,
                     emptyList()
                 )
@@ -50,7 +50,7 @@ class AuthenticationFilter(
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
         val userUsername = (authResult?.principal as org.springframework.security.core.userdetails.User).username
-        val user = userRepository.findTopByUsername(userUsername)
+        val user = userRepository.findTopByEmail(userUsername)
         user?.let{
             response?.apply {
                 writeJsonResponse(

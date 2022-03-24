@@ -12,8 +12,6 @@ class User (
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userID")
     var id:Long = 0,
-    @Column(name = "username")
-    var username:String = "",
     @Column(name = "firstName", nullable = false)
     var firstName:String = "",
     @Column(name = "lastName", nullable = false)

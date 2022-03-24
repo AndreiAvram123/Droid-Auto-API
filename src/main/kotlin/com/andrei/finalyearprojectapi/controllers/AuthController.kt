@@ -61,9 +61,6 @@ class AuthController(
 
     @Throws(RegisterException::class)
     private fun isNewUserValid(user:User):Boolean{
-        userRepository.findTopByUsername(user.username)?.let {
-            throw RegisterException(registrationMessage = errorUsernameExists)
-        }
         userRepository.findTopByEmail(user.email)?.let {
             throw RegisterException(registrationMessage = errorEmailAlreadyUsed)
         }
@@ -73,7 +70,6 @@ class AuthController(
 
 
     companion object{
-        const val errorUsernameExists = "Username already exists"
         const val errorEmailAlreadyUsed = "Email already used"
     }
 }
