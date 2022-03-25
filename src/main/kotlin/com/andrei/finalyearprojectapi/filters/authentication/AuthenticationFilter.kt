@@ -35,17 +35,17 @@ class AuthenticationFilter(
         val requestBody = request.reader.lines().collect(Collectors.joining())
         val gson = Gson()
         val user =  try {
-             gson.fromJson(requestBody, User::class.java)!!
+            gson.fromJson(requestBody, User::class.java)!!
         }catch (e:Exception){
             throw InvalidJsonException()
         }
         return authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(
-                    user.email,
-                    user.password,
-                    emptyList()
-                )
+            UsernamePasswordAuthenticationToken(
+                user.email,
+                user.password,
+                emptyList()
             )
+        )
     }
 
     override fun successfulAuthentication(request: HttpServletRequest?, response: HttpServletResponse?, chain: FilterChain?, authResult: Authentication?) {
@@ -65,11 +65,9 @@ class AuthenticationFilter(
         val loginResponse = LoginResponse(
             isEmailVerified = user.emailVerified
         )
-        if(user.emailVerified){
-            loginResponse.apply {
-                accessToken =   jwtTokenUtility.generateAccessToken(user).rawValue
-                refreshToken =   jwtTokenUtility.generateRefreshToken(user).rawValue
-            }
+        loginResponse.apply {
+            accessToken =   jwtTokenUtility.generateAccessToken(user).rawValue
+            refreshToken =   jwtTokenUtility.generateRefreshToken(user).rawValue
         }
         return  loginResponse;
 
