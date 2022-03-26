@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.configuration.annotations.AdminTokenRequired
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
-import com.andrei.finalyearprojectapi.filters.RequestDataObject
+import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
@@ -19,13 +19,13 @@ abstract class AdminTokenFilter : SecurityFilter
  */
 @Component
 class AdminTokenFilterImpl(
-    private var userRequestDataObject: RequestDataObject
+    private var useFilterDataObject: FilterDataObject
 ) :AdminTokenFilter() {
 
     override fun shouldCheckRequest(request: HttpServletRequest): Boolean  = request.endpointHasAnnotation<AdminTokenRequired>()
 
     override fun isFilterPassed(request: HttpServletRequest): Boolean {
-        return  userRequestDataObject.user?.role == UserRole.ADMIN
+        return  useFilterDataObject.getUserNotNull().role == UserRole.ADMIN
     }
 
     override fun generateErrorResponse(): ResponseWrapper<String>  = notAuthorized()

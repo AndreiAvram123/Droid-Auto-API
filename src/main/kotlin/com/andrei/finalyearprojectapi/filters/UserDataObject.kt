@@ -1,12 +1,9 @@
 package com.andrei.finalyearprojectapi.filters
 
 import com.andrei.finalyearprojectapi.entity.User
-import org.springframework.stereotype.Component
-import org.springframework.web.context.annotation.RequestScope
 
-@Component
-@RequestScope
-class RequestDataObject {
+
+open class FilterDataObject {
     var user: User? = null
 
     fun getUserNotNull(): User {
@@ -17,3 +14,4 @@ class RequestDataObject {
         return temp
     }
 }
+

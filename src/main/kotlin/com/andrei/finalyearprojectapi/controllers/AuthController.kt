@@ -3,11 +3,12 @@ package com.andrei.finalyearprojectapi.controllers
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
-import com.andrei.finalyearprojectapi.filters.RequestDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
+import com.andrei.finalyearprojectapi.response.TokenResponse
 import com.andrei.finalyearprojectapi.services.EmailService
+import com.andrei.finalyearprojectapi.utils.JWTUtils
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
@@ -22,7 +23,7 @@ class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
     private val emailService: EmailService,
-    private var requestDataObject: RequestDataObject
+    private val jwtUtils: JWTUtils
 ) {
 
     @PostMapping("/register")
@@ -51,12 +52,31 @@ class AuthController(
 
 
     @PostMapping("/email/verification")
-    fun sendVerificationEmail():ResponseWrapper<Nothing>{
-        val user = requestDataObject.getUserNotNull();
+    fun sendVerificationEmail(
+        user:User
+    ):ResponseWrapper<Nothing>{
         emailService.sendVerificationEmail(
            to =  Email(user.email)
         )
         return okResponse();
+    }
+
+    @GetMapping("/token")
+    fun getNewAccessToken(
+        @RequestParam refreshToken:String
+    ):ResponseWrapper<TokenResponse>{
+        val decodedRefreshToken = jwtUtils.decodeRefreshToken(refreshToken)
+        if(decodedRefreshToken.userID == null){
+            return badRequest(
+                "Not a valid refresh token"
+            )
+        }
+        val user = userRepository.findTopById(decodedRefreshToken.userID) ?: return badRequest("The refresh token does not belong to a valid user")
+        return okResponse(
+            TokenResponse(
+                accessToken = jwtUtils.generateAccessToken(user).value
+            )
+        )
     }
 
 

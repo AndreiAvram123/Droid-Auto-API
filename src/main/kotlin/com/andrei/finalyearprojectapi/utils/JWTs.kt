@@ -1,4 +1,4 @@
-
+package com.andrei.finalyearprojectapi.utils
 
 import com.andrei.finalyearprojectapi.entity.User
 import com.auth0.jwt.JWT
@@ -9,10 +9,8 @@ import javax.servlet.http.HttpServletRequest
 import kotlin.time.Duration
 
 fun HttpServletRequest.getAccessToken():String?{
-    return getHeader(JWTToken.headerName)
+    return getHeader(JWTToken.headerName)?.replace(JWTToken.tokenPrefix,"")
 }
-
-
 
 
 
@@ -25,20 +23,16 @@ abstract class JWTToken {
 }
 
 
-open class DecodedJwt(token: String,
-                 private val decryptionKey:String ): JWTToken() {
-    private val decodedJWT: DecodedJWT? = decodeToken(token)
-    val userID:Long? = decodedJWT?.getClaim(userIDKey)?.asLong()
-
-    open fun isPayloadValid():Boolean = decodedJWT?.subject  != null && userID != null
 
 
+class DecodedJwt(token: String, private val decryptionKey:String): JWTToken() {
+    private val payload: DecodedJWT? = decodeToken(token)
+    val userID:Long? = payload?.getClaim(userIDKey)?.asLong()
 
     private fun decodeToken(token:String): DecodedJWT?{
-        val verifier = JWT.require(Algorithm.HMAC512(decryptionKey.toByteArray()))
-            .build()
+        val verifier = JWT.require(Algorithm.HMAC512(decryptionKey.toByteArray())).build()
         try {
-            return verifier.verify(token.replace(tokenPrefix,""))
+            return verifier.verify(token)
         }   catch (e:Exception){
             return null
         }
@@ -46,11 +40,12 @@ open class DecodedJwt(token: String,
     }
 }
 
-open class EncryptedJWTToken constructor(user:User,
-                                    private val encryptionKey:String,
-                                    private val duration: Duration) : JWTToken() {
+ class EncodedJWT constructor(user:User,
+                                   private val encryptionKey:String,
+                                   private val duration: Duration) : JWTToken() {
 
-    val rawValue = generateTokenForUser(user)
+    val value = generateTokenForUser(user)
+
     private fun generateTokenForUser(user: User): String {
         val expirationDate = Date(System.currentTimeMillis() + duration.inWholeMilliseconds)
         return JWT.create().withSubject(user.email)
