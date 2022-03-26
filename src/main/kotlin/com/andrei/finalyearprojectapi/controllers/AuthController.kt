@@ -3,6 +3,7 @@ package com.andrei.finalyearprojectapi.controllers
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
+import com.andrei.finalyearprojectapi.filters.RequestDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
@@ -20,7 +21,8 @@ import javax.validation.Valid
 class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
-    private val emailService: EmailService
+    private val emailService: EmailService,
+    private var requestDataObject: RequestDataObject
 ) {
 
     @PostMapping("/register")
@@ -48,10 +50,11 @@ class AuthController(
     }
 
 
-    @GetMapping("/sendVerificationEmail")
-    fun test():ResponseWrapper<Nothing>{
+    @PostMapping("/email/verification")
+    fun sendVerificationEmail():ResponseWrapper<Nothing>{
+        val user = requestDataObject.getUserNotNull();
         emailService.sendVerificationEmail(
-            to = Email("andreia@apadmi.com")
+           to =  Email(user.email)
         )
         return okResponse();
     }

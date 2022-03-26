@@ -2,8 +2,8 @@ package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.filters.RequestDataObject
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
-import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
 class AccessTokenFilter(
     private val jwtTokenUtility: JWTTokenUtility,
     private val userRepository: UserRepository,
-    private  var userDataObject: UserDataObject
+    private  var requestDataObject: RequestDataObject
 ) : SecurityFilter {
 
 
@@ -33,7 +33,7 @@ class AccessTokenFilter(
         if (decodedToken.isPayloadValid())
         {
              val user:User = userRepository.findTopById(decodedToken.userID!!) ?: return false
-              userDataObject.user = user
+              requestDataObject.user = user
              return true
         }else{
             return false
