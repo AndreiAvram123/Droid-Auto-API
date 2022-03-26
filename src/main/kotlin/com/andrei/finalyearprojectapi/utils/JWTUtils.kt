@@ -1,8 +1,6 @@
 
 package com.andrei.finalyearprojectapi.utils
 
-import DecodedJwt
-import EncryptedJWTToken
 import com.andrei.finalyearprojectapi.entity.User
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -10,7 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @Component
-class JWTTokenUtility(
+class JWTUtils(
     @Value("\${accessToken.durationSeconds}")
     private val durationAccessToken:Long,
     @Value(",\${accessToken.encryptionKey}")
@@ -21,10 +19,12 @@ class JWTTokenUtility(
     private val encryptionKeyRefreshToken:String
 ){
 
-    fun decodeAccessToken(token:String):DecodedJwt = DecodedJwt(token,encryptionKeyAccessToken)
+    fun decodeAccessToken(token:String): DecodedJwt = DecodedJwt(token,encryptionKeyAccessToken)
+    fun decodeRefreshToken(token:String):DecodedJwt = DecodedJwt(token,encryptionKeyRefreshToken)
 
-    fun generateAccessToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyAccessToken, durationAccessToken.seconds)
-    fun generateRefreshToken(user: User):EncryptedJWTToken = EncryptedJWTToken(user,encryptionKeyRefreshToken, durationRefreshToken.seconds)
+
+    fun generateAccessToken(user: User): EncodedJWT = EncodedJWT(user,encryptionKeyAccessToken, durationAccessToken.seconds)
+    fun generateRefreshToken(user: User): EncodedJWT = EncodedJWT(user,encryptionKeyRefreshToken, durationRefreshToken.seconds)
 
 
 }

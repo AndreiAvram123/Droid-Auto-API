@@ -1,8 +1,8 @@
 package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
+import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
-import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.newLoginDevice
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class IpFilter(
-    private val userDataObject: UserDataObject
+    private val filterDataObject: FilterDataObject
 ) : SecurityFilter {
 
 
@@ -25,7 +25,7 @@ class IpFilter(
     override fun isFilterPassed(request: HttpServletRequest): Boolean {
         //todo
         //might not work
-        val allowedIps = userDataObject.user?.ipAddresses ?: return false
+        val allowedIps = filterDataObject.user?.ipAddresses ?: return false
         val requestIP = request.getForwardedHeader() ?: request.remoteAddr
         allowedIps.find { it.value == requestIP }?.let {
             return true

@@ -1,13 +1,13 @@
 package com.andrei.finalyearprojectapi.filters.access
 
 
-import DecodedJwt
-import JWTToken
+import com.andrei.finalyearprojectapi.utils.DecodedJwt
+import com.andrei.finalyearprojectapi.utils.JWTToken
 import com.andrei.finalyearprojectapi.configuration.TestDetails
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.filters.UserDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
+import com.andrei.finalyearprojectapi.utils.JWTUtils
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
@@ -20,12 +20,12 @@ class AccessTokenFilterTest{
 
 
 
-    private val jwtTokenUtility: JWTTokenUtility = mockk(relaxed = true)
+    private val jwtUtils: JWTUtils = mockk(relaxed = true)
 
     private val userRepository: UserRepository = mockk(relaxed = true)
 
     private val  accessTokenFilter: AccessTokenFilter = AccessTokenFilter(
-        jwtTokenUtility,
+        jwtUtils,
         userRepository,
         UserDataObject()
     )
@@ -70,10 +70,10 @@ class AccessTokenFilterTest{
     fun `Given valid access token the filter will pass`(){
 
         val rawToken ="${JWTToken.tokenPrefix} token"
-        val decodedJwt:DecodedJwt = mockk(relaxed = true)
+        val decodedJwt: DecodedJwt = mockk(relaxed = true)
 
         coEvery {
-            jwtTokenUtility.decodeAccessToken(rawToken)
+            jwtUtils.decodeAccessToken(rawToken)
         } returns decodedJwt
 
         coEvery {

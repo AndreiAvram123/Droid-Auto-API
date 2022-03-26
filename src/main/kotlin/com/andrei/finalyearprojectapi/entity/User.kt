@@ -2,8 +2,8 @@ package com.andrei.finalyearprojectapi.entity
 
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.entity.enums.UserRoleConverter
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-
 import javax.persistence.*
 
 @Entity(name = "users")
@@ -21,9 +21,12 @@ class User (
     @Column(nullable = false)
     var emailVerified:Boolean = false,
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     var password:String = "",
     @Convert(converter = UserRoleConverter::class)
     var role:UserRole = UserRole.USER,
+
     @OneToMany
+    @JsonIgnore
     var ipAddresses:MutableList<IpAddress> = mutableListOf()
 )

@@ -5,7 +5,7 @@ import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.response.LoginResponse
-import com.andrei.finalyearprojectapi.utils.JWTTokenUtility
+import com.andrei.finalyearprojectapi.utils.JWTUtils
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
 import com.google.gson.Gson
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
     private val userRepository: UserRepository,
-    private val jwtTokenUtility: JWTTokenUtility
+    private val jwtUtils: JWTUtils
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
 
@@ -66,8 +66,8 @@ class AuthenticationFilter(
             isEmailVerified = user.emailVerified
         )
         loginResponse.apply {
-            accessToken =   jwtTokenUtility.generateAccessToken(user).rawValue
-            refreshToken =   jwtTokenUtility.generateRefreshToken(user).rawValue
+            accessToken =   jwtUtils.generateAccessToken(user).value
+            refreshToken =   jwtUtils.generateRefreshToken(user).value
         }
         return  loginResponse;
 

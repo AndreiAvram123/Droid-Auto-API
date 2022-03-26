@@ -1,11 +1,8 @@
 package com.andrei.finalyearprojectapi.filters
 
-import com.andrei.finalyearprojectapi.configuration.exception.ExceptionHandler
 import com.andrei.finalyearprojectapi.filters.access.AccessTokenFilter
 import com.andrei.finalyearprojectapi.filters.access.AdminTokenFilter
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
@@ -21,7 +18,8 @@ class FilterManagerImpl(
     adminTokenFilter: AdminTokenFilter
 ) : FilterManger() {
     //the order in which filters are added matters
-    override val filters: List<SecurityFilter> = listOf(accessTokenFilter,
+    override val filters: List<SecurityFilter> = listOf(
+        accessTokenFilter,
     adminTokenFilter)
 
     override fun doFilterInternal(
