@@ -14,4 +14,5 @@ class Car(
 
     @Embedded
     val location:LatLng = LatLng()
+
 )

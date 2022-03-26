@@ -9,10 +9,24 @@ class Model(
     @Column(name = "modelID")
     var id: Long = 0,
 
-
-    @Column(name = "model_name")
+    @Column(
+        name = "model_name",
+        nullable = false
+    )
     var name:String = "",
 
-    @Column(name = "manufacturer_name")
-    var manufacturerName:String = ""
+    @Column(
+        name = "manufacturer_name",
+        nullable = false
+    )
+    var manufacturerName:String = "",
+
+    @OneToOne(
+        optional = true,
+        orphanRemoval = true,
+        cascade = [
+            CascadeType.REMOVE,
+            CascadeType.PERSIST]
+    )
+    var image:Image = Image()
 )
