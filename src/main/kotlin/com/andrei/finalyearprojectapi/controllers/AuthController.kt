@@ -62,6 +62,7 @@ class AuthController(
     }
 
     @GetMapping("/token")
+    @NoAuthenticationRequired
     fun getNewAccessToken(
         @RequestParam refreshToken:String
     ):ResponseWrapper<TokenResponse>{
