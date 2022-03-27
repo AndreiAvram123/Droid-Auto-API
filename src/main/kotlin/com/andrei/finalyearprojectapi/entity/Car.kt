@@ -13,6 +13,7 @@ class Car(
     var model:Model = Model(),
 
     @Embedded
-    val location:LatLng = LatLng()
+    val location:LatLng = LatLng(),
+
 
 )
