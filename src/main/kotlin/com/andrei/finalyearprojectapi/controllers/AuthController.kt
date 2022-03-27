@@ -4,6 +4,7 @@ import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthentication
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.request.auth.NewTokenRequest
 import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.response.TokenResponse
@@ -61,18 +62,18 @@ class AuthController(
         return okResponse();
     }
 
-    @GetMapping("/token")
+    @PostMapping("/token")
     @NoAuthenticationRequired
     fun getNewAccessToken(
-        @RequestParam refreshToken:String
+        @RequestBody
+        @Valid
+        newTokenRequest: NewTokenRequest
     ):ResponseWrapper<TokenResponse>{
-        val decodedRefreshToken = jwtUtils.decodeRefreshToken(refreshToken)
-        if(decodedRefreshToken.userID == null){
-            return badRequest(
-                "Not a valid refresh token"
-            )
-        }
-        val user = userRepository.findTopById(decodedRefreshToken.userID) ?: return badRequest("The refresh token does not belong to a valid user")
+
+        val userID = jwtUtils.decodeRefreshToken(newTokenRequest.refreshToken).userID ?:  return badRequest(
+            "Not a valid refresh token"
+        )
+        val user = userRepository.findTopById(userID) ?: return badRequest("The refresh token does not belong to a valid user")
         return okResponse(
             TokenResponse(
                 accessToken = jwtUtils.generateAccessToken(user).value
