@@ -7,10 +7,7 @@ import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -32,6 +29,11 @@ class CarController(
         reservation: ReservationRequest
     ):ResponseWrapper<Nothing>{
          val car = carRepository.findByIdOrNull(reservation.carID) ?: return badRequest("No car found with this id")
+        return okResponse()
+    }
+
+    @DeleteMapping("/reservation")
+    fun cancelReservation():ResponseWrapper<Nothing>{
         return okResponse()
     }
 }
