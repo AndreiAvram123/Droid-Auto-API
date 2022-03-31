@@ -23,7 +23,7 @@ class PaymentService(
         paymentRequest: PaymentRequest
     ):PaymentResponse{
           val paymentIntentParameters = PaymentIntentCreateParams.Builder().apply {
-              setAmount(paymentRequest.amount *100)
+              setAmount(paymentRequest.amount)
               setCurrency("gbp")
           }.build()
         val paymentIntent = PaymentIntent.create(paymentIntentParameters)
