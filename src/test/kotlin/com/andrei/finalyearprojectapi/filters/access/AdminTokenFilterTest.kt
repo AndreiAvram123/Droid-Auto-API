@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.filters.access
 
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
-import com.andrei.finalyearprojectapi.filters.UserDataObject
+import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
@@ -11,10 +11,10 @@ class AdminTokenFilterTest{
 
     var request = MockHttpServletRequest()
 
-    private val userDataObject:UserDataObject = UserDataObject()
+    private val userDataObject:FilterDataObject = FilterDataObject()
 
     private val adminTokenFilter: AdminTokenFilter = AdminTokenFilterImpl(
-        userDataObject = userDataObject
+        useFilterDataObject = userDataObject
     )
 
 

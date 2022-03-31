@@ -8,9 +8,7 @@ import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.LoginRequest
 import com.google.gson.Gson
-import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,8 +19,8 @@ import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 
 @SpringBootTest
@@ -44,7 +42,7 @@ class AuthControllerTest{
 
     @BeforeAll
     fun setUpBeforeAll(){
-        val user = User(username = TestDetails.testUsername,password = bCryptPasswordEncoder.encode(TestDetails.testPassword))
+        val user = User(password = bCryptPasswordEncoder.encode(TestDetails.testPassword))
         userRepository.save(user)
     }
 

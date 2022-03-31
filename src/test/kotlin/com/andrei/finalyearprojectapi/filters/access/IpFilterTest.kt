@@ -3,13 +3,13 @@ package com.andrei.finalyearprojectapi.filters.access
 import com.andrei.finalyearprojectapi.configuration.TestDetails
 import com.andrei.finalyearprojectapi.entity.IpAddress
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.filters.UserDataObject
+import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 
 class IpFilterTest{
 
-     private val userDataObject = UserDataObject().apply {
+     private val userDataObject = FilterDataObject().apply {
          user = User().apply {
              ipAddresses.add(
                  IpAddress(

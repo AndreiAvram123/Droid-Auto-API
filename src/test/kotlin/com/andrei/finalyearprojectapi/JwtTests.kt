@@ -6,8 +6,10 @@ import com.andrei.finalyearprojectapi.utils.JWTUtils
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
+@ActiveProfiles("local")
 class JwtTests {
 
     @Autowired
@@ -17,7 +19,6 @@ class JwtTests {
     fun `encrypted token can be  decrypted and contain the userID `(){
         val user = User(
              id = TestDetails.testId,
-            username = TestDetails.testUsername,
             password = TestDetails.testPassword
         )
         val encodedToken = jwtUtils.generateAccessToken(user).value

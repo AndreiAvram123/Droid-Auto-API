@@ -1,12 +1,12 @@
 package com.andrei.finalyearprojectapi.filters.access
 
 
-import com.andrei.finalyearprojectapi.utils.DecodedJwt
-import com.andrei.finalyearprojectapi.utils.JWTToken
 import com.andrei.finalyearprojectapi.configuration.TestDetails
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.filters.UserDataObject
+import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.utils.DecodedJwt
+import com.andrei.finalyearprojectapi.utils.JWTToken
 import com.andrei.finalyearprojectapi.utils.JWTUtils
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,9 +25,9 @@ class AccessTokenFilterTest{
     private val userRepository: UserRepository = mockk(relaxed = true)
 
     private val  accessTokenFilter: AccessTokenFilter = AccessTokenFilter(
-        jwtUtils,
-        userRepository,
-        UserDataObject()
+        userRepository = userRepository,
+        jwtUtils = jwtUtils,
+        filterDataObject = FilterDataObject()
     )
 
     init {
@@ -45,23 +45,11 @@ class AccessTokenFilterTest{
          coEvery {
              userRepository.findTopById(testUser.id)
          }returns testUser
-         accessTokenFilter
     }
 
 
     @Test
     fun `Given no access token header the filter should not pass`(){
-        assert(!accessTokenFilter.isFilterPassed(mockRequest))
-    }
-
-    @Test
-    fun `Given null access token the filter should not pass`(){
-        mockRequest.addHeader(JWTToken.headerName,"null")
-        assert(!accessTokenFilter.isFilterPassed(mockRequest))
-    }
-    @Test
-    fun `Given invalid access token the filter should not pass`(){
-        mockRequest.addHeader(JWTToken.headerName,"Bearer sdfsdf")
         assert(!accessTokenFilter.isFilterPassed(mockRequest))
     }
 
@@ -77,7 +65,7 @@ class AccessTokenFilterTest{
         } returns decodedJwt
 
         coEvery {
-            decodedJwt.isPayloadValid()
+            decodedJwt.userID != null
         } returns true
 
 
