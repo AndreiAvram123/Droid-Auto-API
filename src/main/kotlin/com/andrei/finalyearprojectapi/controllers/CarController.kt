@@ -32,6 +32,11 @@ class CarController(
         return okResponse()
     }
 
+    @PostMapping("/reservation/unlock")
+    fun unlockCar():ReponseWrapper<Nothing>{
+        return okResponse()
+    }
+
     @DeleteMapping("/reservation")
     fun cancelReservation():ResponseWrapper<Nothing>{
         return okResponse()
