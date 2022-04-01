@@ -33,7 +33,7 @@ class CarController(
     }
 
     @PostMapping("/reservation/unlock")
-    fun unlockCar():ReponseWrapper<Nothing>{
+    fun unlockCar():ResponseWrapper<Nothing>{
         return okResponse()
     }
 
