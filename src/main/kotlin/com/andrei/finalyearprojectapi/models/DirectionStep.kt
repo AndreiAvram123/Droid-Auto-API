@@ -3,8 +3,8 @@ package com.andrei.finalyearprojectapi.models
 import com.google.gson.annotations.SerializedName
 
 data class DirectionStep(
-     @SerializedName("end_location")
+     @SerializedName(value = "endLocation", alternate = ["end_location"])
      val endLocation:LatLngDTO,
-     @SerializedName("start_location")
+     @SerializedName(value = "startLocation", alternate = ["start_location"])
      val startLocation:LatLngDTO
 )
