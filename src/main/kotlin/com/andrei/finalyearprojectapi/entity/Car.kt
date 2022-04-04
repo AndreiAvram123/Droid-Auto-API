@@ -10,7 +10,7 @@ class Car(
     val id: Long,
 
     @ManyToOne
-    val carModel:CarModel,
+    val model:CarModel,
 
     @Embedded
     val location:LatLng,
