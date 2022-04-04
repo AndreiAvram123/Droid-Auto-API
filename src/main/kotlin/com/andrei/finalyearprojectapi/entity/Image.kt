@@ -3,17 +3,16 @@ package com.andrei.finalyearprojectapi.entity
 import javax.persistence.*
 
 @Entity
-class Image{
+class Image(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "image_id")
-    var id:Long = 0
-
+    val id:Long
+) {
     @Column(name = "url")
-    var url:String = ""
-    get() {
-        return "https://robohash.org/$id"
-    }
-
+    var url: String = ""
+        get() {
+            return "https://robohash.org/$id"
+        }
 
 }

@@ -1,11 +1,9 @@
 package com.andrei.finalyearprojectapi.entity
 
-import javax.persistence.*
+import javax.persistence.Embeddable
 
 @Embeddable
 class LatLng(
-    val latitude:Double = 0.0,
-    val longitude:Double = 0.0
-){
-
-}
+    val latitude:Double,
+    val longitude:Double
+)

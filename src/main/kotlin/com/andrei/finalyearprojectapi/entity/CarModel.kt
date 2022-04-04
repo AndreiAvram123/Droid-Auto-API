@@ -2,24 +2,24 @@ package com.andrei.finalyearprojectapi.entity
 
 import javax.persistence.*
 
-@Entity
-class Model(
+@Entity(name = "model")
+class CarModel(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "modelID")
-    var id: Long = 0,
+    val id: Long,
 
     @Column(
         name = "model_name",
         nullable = false
     )
-    var name:String = "",
+    val name:String,
 
     @Column(
         name = "manufacturer_name",
         nullable = false
     )
-    var manufacturerName:String = "",
+    val manufacturerName:String,
 
     @OneToOne(
         optional = true,
@@ -28,5 +28,6 @@ class Model(
             CascadeType.REMOVE,
             CascadeType.PERSIST]
     )
-    var image:Image = Image()
+    val image:Image,
+
 )

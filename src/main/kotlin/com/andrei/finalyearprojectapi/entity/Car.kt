@@ -7,13 +7,18 @@ class Car(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "carID")
-    var id: Long = 0,
+    val id: Long,
 
     @ManyToOne
-    var model:Model = Model(),
+    val carModel:CarModel,
 
     @Embedded
-    val location:LatLng = LatLng(),
+    val location:LatLng,
 
+    @Column(
+        name = "price_per_minute",
+        nullable = false
+    )
+    val pricePerMinute:Double
 
 )

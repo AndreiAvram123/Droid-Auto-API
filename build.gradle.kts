@@ -8,6 +8,10 @@ plugins {
     //HEROKU GOES CRAZY WITH A BIGGER VERSION OF THIS
     id("org.springframework.boot") version "2.4.1"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+
+    id ("org.jetbrains.kotlin.plugin.noarg") version "1.6.10"
+    id ("org.jetbrains.kotlin.plugin.jpa") version "1.6.10"
+
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
     kotlin("kapt") version "1.6.10"

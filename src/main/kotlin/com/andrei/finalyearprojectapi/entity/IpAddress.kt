@@ -6,8 +6,8 @@ import javax.persistence.*
 class IpAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    var id:Long = 0,
+    val id:Long,
 
     @Column(name = "value", nullable = false)
-    var value:String = ""
+    val value:String
 )
