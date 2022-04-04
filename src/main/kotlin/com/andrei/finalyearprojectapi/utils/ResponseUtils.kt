@@ -20,7 +20,7 @@ fun  <T> noContent(error:String): ResponseWrapper<T> =
 fun <T> notAcceptable(error: String):ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ApiResponse.Error(error))
 
-fun <T> error(code:Int, error:String):ResponseWrapper<T> =
+fun <T> errorResponse(code:HttpStatus, error:String):ResponseWrapper<T> =
     ResponseEntity.status(code).body(ApiResponse.Error(error))
 
 fun <T> okResponse(data: T? = null) : ResponseWrapper<T> =
