@@ -2,7 +2,6 @@ package com.andrei.finalyearprojectapi.utils
 
 import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.google.gson.Gson
-
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -21,14 +20,22 @@ fun  <T> noContent(error:String): ResponseWrapper<T> =
 fun <T> notAcceptable(error: String):ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ApiResponse.Error(error))
 
+fun <T> error(code:Int, error:String):ResponseWrapper<T> =
+    ResponseEntity.status(code).body(ApiResponse.Error(error))
 
-fun <T> okResponse(data: T? = null) : ResponseWrapper<T> = ResponseEntity.ok(ApiResponse.Success(data))
+fun <T> okResponse(data: T? = null) : ResponseWrapper<T> =
+    ResponseEntity.ok(ApiResponse.Success(data))
 
-fun <T> notAuthorized():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
 
-fun <T> newLoginDevice():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
 
-fun <T> notAuthenticated():ResponseWrapper<T> = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.Error(ResponseMessages.errorNotAuthenticated))
+fun <T> notAuthorized():ResponseWrapper<T> =
+    ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
+
+fun <T> newLoginDevice():ResponseWrapper<T> =
+    ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(ApiResponse.Error(ResponseMessages.errorNotAuthorized))
+
+fun <T> notAuthenticated():ResponseWrapper<T> =
+    ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.Error(ResponseMessages.errorNotAuthenticated))
 
 
 /**

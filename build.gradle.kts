@@ -51,6 +51,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security:2.6.5")
 
     //database connectivity and management
+    implementation ("io.lettuce:lettuce-core:6.1.2.RELEASE")
+    implementation  ("org.springframework.data:spring-data-redis:2.5.1")
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.5")
     implementation("org.postgresql:postgresql:42.3.3")
 

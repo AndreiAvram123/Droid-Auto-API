@@ -13,6 +13,7 @@ class IpFilterTest{
          user = User().apply {
              ipAddresses.add(
                  IpAddress(
+                  id  = 1,
                  value = TestDetails.testIP
              ))
          }
