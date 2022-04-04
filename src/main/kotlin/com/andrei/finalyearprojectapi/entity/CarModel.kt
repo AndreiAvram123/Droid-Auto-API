@@ -22,7 +22,7 @@ class CarModel(
     val manufacturerName:String,
 
     @OneToOne(
-        optional = true,
+        optional = false,
         orphanRemoval = true,
         cascade = [
             CascadeType.REMOVE,
