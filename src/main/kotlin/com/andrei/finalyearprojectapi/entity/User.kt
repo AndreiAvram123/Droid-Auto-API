@@ -7,26 +7,26 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.*
 
 @Entity(name = "users")
-class User (
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userID")
-    var id:Long = 0,
+    val id:Long,
     @Column(name = "firstName", nullable = false)
-    var firstName:String = "",
+    val firstName:String,
     @Column(name = "lastName", nullable = false)
-    var lastName:String = "",
+    val lastName:String ,
     @Column(nullable = false)
-    var email:String = "",
+    val email:String ,
     @Column(nullable = false)
-    var emailVerified:Boolean = false,
+    val emailVerified:Boolean = false,
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonIgnore
-    var password:String = "",
+    val password:String ,
     @Convert(converter = UserRoleConverter::class)
-    var role:UserRole = UserRole.USER,
+    val role:UserRole = UserRole.USER,
 
     @OneToMany
     @JsonIgnore
-    var ipAddresses:MutableList<IpAddress> = mutableListOf()
+    val ipAddresses:MutableList<IpAddress> = mutableListOf()
 )

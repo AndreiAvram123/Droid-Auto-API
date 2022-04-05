@@ -17,6 +17,7 @@ data class RegisterUserRequest(
 )
 
 fun RegisterUserRequest.toUser(passwordEncoder: BCryptPasswordEncoder) = User(
+                id = 1,
                 firstName = firstName,
                 lastName = lastName,
                 email =  email,

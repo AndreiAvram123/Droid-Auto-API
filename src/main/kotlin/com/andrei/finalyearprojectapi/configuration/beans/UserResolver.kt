@@ -19,7 +19,7 @@ class UserResolver(
 ) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
-       return parameter.parameterType == User::class
+       return parameter.parameterType == User::class.java
     }
 
     override fun resolveArgument(
@@ -28,13 +28,14 @@ class UserResolver(
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): User {
+
         val nativeRequest = webRequest.getNativeRequest(HttpServletRequest::class.java)
-        val accessToken = nativeRequest?.getAccessToken()
-        check(accessToken !=null){ "The endpoint requires authentication"}
+        val accessToken = nativeRequest?.getAccessToken() ?: throw Exception()
+
         val decodedToken = jwtUtils.decodeAccessToken(accessToken)
-        check(decodedToken.userID !=null){ "The endpoint requires authentication"}
-        val user = userRepository.findTopById(decodedToken.userID)
-        check(user !=null){ "The endpoint requires authentication"}
-        return user
+
+        check(decodedToken.userID != null) { "Security issue with the filter" }
+
+        return userRepository.findTopById(decodedToken.userID) ?: throw Exception()
     }
 }
