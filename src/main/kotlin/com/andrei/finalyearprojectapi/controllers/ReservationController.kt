@@ -4,10 +4,7 @@ import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.request.auth.ReservationRequest
 import com.andrei.finalyearprojectapi.services.ReservationService
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
-import com.andrei.finalyearprojectapi.utils.errorResponse
-import com.andrei.finalyearprojectapi.utils.noContent
-import com.andrei.finalyearprojectapi.utils.okResponse
+import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -30,7 +27,7 @@ class ReservationController (
         user: User
     ):ResponseWrapper<Nothing>{
         val car = carRepository.findByIdOrNull(reservation.carID) ?: return noContent("No car found with this id")
-        val reservationResult = reservationService.makeReservation(
+        val reservationResult = reservationService.makePreReservation(
             car = car,
             user = user
         )
@@ -52,11 +49,19 @@ class ReservationController (
     }
 
     @DeleteMapping("/reservation")
-    fun cancelReservation():ResponseWrapper<Nothing>{
-        return okResponse()
+    fun cancelReservation(
+        user: User
+    ):ResponseWrapper<Nothing>{
+        val success = reservationService.cancelReservation(user)
+        return if(success){
+            okResponse()
+        }else{
+            notAcceptable(noReservationFoundMessage)
+        }
     }
 
     companion object{
         const val carNotAvailableMessage:String  = "Car not available at the moment"
+        const val noReservationFoundMessage:String  = "No reservation found"
     }
 }
