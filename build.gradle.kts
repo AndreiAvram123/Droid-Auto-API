@@ -27,17 +27,21 @@ repositories {
     maven {
         setUrl( "https://mymavenrepo.com/repo/v2xm7gYVinuWT46Px3Xy/")
     }
+
+
 }
 
 dependencies {
 
     val mockkVersion = "1.12.3"
 
+    implementation("org.geotools:gt-shapefile:26.3")
+
    //payment
     implementation ("com.stripe:stripe-java:20.111.0")
 
     //email service
-    implementation ("com.sendgrid:sendgrid-java:4.8.3")
+    implementation ("com.sendgrid:sendgrid-java:4.9.1")
 
     //validation
     implementation("org.springframework.boot:spring-boot-starter-validation:2.6.5")
@@ -51,8 +55,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security:2.6.5")
 
     //database connectivity and management
-    implementation ("io.lettuce:lettuce-core:6.1.2.RELEASE")
-    implementation  ("org.springframework.data:spring-data-redis:2.5.1")
+    implementation ("io.lettuce:lettuce-core:6.1.8.RELEASE")
+    implementation  ("org.springframework.data:spring-data-redis:2.6.3")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.6.5")
     implementation("org.postgresql:postgresql:42.3.3")
