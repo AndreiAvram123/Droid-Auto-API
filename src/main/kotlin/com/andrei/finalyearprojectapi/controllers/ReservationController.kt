@@ -1,16 +1,14 @@
 package com.andrei.finalyearprojectapi.controllers
 
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.request.auth.ReservationRequest
 import com.andrei.finalyearprojectapi.services.ReservationService
 import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -42,6 +40,13 @@ class ReservationController (
             }
         }
     }
+
+    @GetMapping("/reservation/current")
+    fun getCurrentReservation(
+        user:User
+    ):ResponseWrapper<Reservation> = okResponse(
+        reservationService.getUserReservation(user)
+    )
 
     @PostMapping("/reservation/unlock")
     fun unlockCar():ResponseWrapper<Nothing>{

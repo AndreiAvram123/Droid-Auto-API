@@ -2,6 +2,10 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.entity.non_persistent.PreReservation
+import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
+import com.andrei.finalyearprojectapi.utils.hasExpireTime
+import com.andrei.finalyearprojectapi.utils.keyExists
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.sync.RedisCommands
 import org.springframework.beans.factory.annotation.Value
@@ -36,7 +40,9 @@ class ReservationService(
         if(reservationExists(car.id)){
             return ReservationResult.NotAvailable
         }
+
         commands.apply {
+
             hmset(
                 keyCar,
                 mapOf(
@@ -66,23 +72,46 @@ class ReservationService(
     fun cancelReservation(
         user:User
     ):Boolean{
+        val reservation = getUserReservation(user) ?: return false
+        deleteReservationKeys(
+            userID = reservation.userID,
+            carID = reservation.carID
+        )
+
+        return true
+    }
+
+
+    fun getUserReservation(
+        user:User
+    ):Reservation?{
         //check if user reservation exists
         val keyUserReservation = userKeyFormat.format(user.id)
-
-        if(commands.exists(keyUserReservation) < 1) {
-           return false
+        if(commands.keyExists(keyUserReservation)){
+            val reservationMap:Map<String,String> = commands.hgetall(keyUserReservation)
+            if(commands.hasExpireTime(keyUserReservation)){
+                 //pre reservation
+                  return reservationMap.toPreReservation(
+                      commands.ttl(keyUserReservation).toInt()
+                  )
+            }
         }
-        val carReservedID = commands.hget(keyUserReservation,ReservationFieldKeys.CAR_ID.value) ?: return false
-        val keyCarReservation = carKeyFormat.format(carReservedID.toLong())
-        if(commands.exists(keyCarReservation) > 0){
-            deleteReservationKeys(
-                userID = user.id,
-                carID = carReservedID.toLong()
-            )
-            return true
-        }
-        return false
+         return null
     }
+    private fun Map<String,String>.toPreReservation(
+        remainingTime:Int
+    ):PreReservation? = runCatching{
+        PreReservation(
+            userID = getValue(ReservationFieldKeys.USER_ID.value).toLong(),
+            carID = getValue(ReservationFieldKeys.CAR_ID.value).toLong(),
+            remainingTime = remainingTime
+        )
+    }.getOrNull()
+
+
+
+
+
 
     private fun deleteReservationKeys(
         userID:Long,
@@ -93,5 +122,6 @@ class ReservationService(
             del(carKeyFormat.format(carID))
         }
     }
+
 
 }
