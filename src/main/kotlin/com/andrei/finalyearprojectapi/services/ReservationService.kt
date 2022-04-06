@@ -2,18 +2,21 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.non_persistent.TemporaryReservation
 import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
+import com.andrei.finalyearprojectapi.entity.non_persistent.TemporaryReservation
+import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.sync.RedisCommands
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class ReservationService(
      redisConnection: StatefulRedisConnection<String, String>,
+     private val carRepository: CarRepository,
      @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
 ) {
 
@@ -75,7 +78,7 @@ class ReservationService(
         val reservation = getUserReservation(user) ?: return false
         deleteReservationKeys(
             userID = reservation.userID,
-            carID = reservation.carID
+            carID = reservation.car.id
         )
 
         return true
@@ -104,7 +107,7 @@ class ReservationService(
     ):TemporaryReservation? = runCatching{
         TemporaryReservation(
             userID = getValue(ReservationFieldKeys.USER_ID.value).toLong(),
-            carID = getValue(ReservationFieldKeys.CAR_ID.value).toLong(),
+            car = carRepository.findByIdOrNull(getValue(ReservationFieldKeys.CAR_ID.value).toLong())!!,
             remainingTime = remainingTime
         )
     }.getOrNull()
