@@ -35,7 +35,6 @@ dependencies {
 
     val mockkVersion = "1.12.3"
 
-    implementation("org.geotools:gt-shapefile:26.3")
 
    //payment
     implementation ("com.stripe:stripe-java:20.111.0")
