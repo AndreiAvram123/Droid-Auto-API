@@ -45,7 +45,7 @@ class AuthController(
     }
 
     @NoAuthenticationRequired
-    @GetMapping("/emailValid")
+    @GetMapping("/email/valid")
     fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<Nothing>{
          userRepository.findTopByEmail(email) ?: return okResponse()
          return badRequest(errorEmailAlreadyUsed)
