@@ -1,7 +1,8 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.car_rental_android.engine.response.ReservationResponse
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
+import com.andrei.finalyearprojectapi.entity.non_persistent.TemporaryReservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.request.auth.ReservationRequest
 import com.andrei.finalyearprojectapi.services.ReservationService
@@ -41,14 +42,20 @@ class ReservationController (
         }
     }
 
-    @GetMapping("/reservation/current")
-    fun getCurrentReservation(
+    @GetMapping("/reservations/current")
+    fun getPreReservation(
         user:User
-    ):ResponseWrapper<Reservation> = okResponse(
-        reservationService.getUserReservation(user)
-    )
+    ):ResponseWrapper<ReservationResponse> {
+        val reservation = reservationService.getUserReservation(user) ?: return okResponse(null)
+        return okResponse(
+            ReservationResponse(
+                isTemporary = reservation is TemporaryReservation,
+                temporaryReservation = reservation as? TemporaryReservation
+            )
+        )
+    }
 
-    @PostMapping("/reservation/unlock")
+    @PostMapping("/reservation/car/unlock")
     fun unlockCar():ResponseWrapper<Nothing>{
         return okResponse()
     }

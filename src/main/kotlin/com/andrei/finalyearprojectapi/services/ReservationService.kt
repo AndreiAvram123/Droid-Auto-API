@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.non_persistent.PreReservation
+import com.andrei.finalyearprojectapi.entity.non_persistent.TemporaryReservation
 import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
@@ -82,7 +82,8 @@ class ReservationService(
     }
 
 
-    fun getUserReservation(
+
+     fun getUserReservation(
         user:User
     ):Reservation?{
         //check if user reservation exists
@@ -100,8 +101,8 @@ class ReservationService(
     }
     private fun Map<String,String>.toPreReservation(
         remainingTime:Int
-    ):PreReservation? = runCatching{
-        PreReservation(
+    ):TemporaryReservation? = runCatching{
+        TemporaryReservation(
             userID = getValue(ReservationFieldKeys.USER_ID.value).toLong(),
             carID = getValue(ReservationFieldKeys.CAR_ID.value).toLong(),
             remainingTime = remainingTime
