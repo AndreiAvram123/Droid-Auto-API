@@ -3,7 +3,6 @@ package com.andrei.finalyearprojectapi.services
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
-import com.andrei.finalyearprojectapi.entity.non_persistent.TemporaryReservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
@@ -95,17 +94,17 @@ class ReservationService(
             val reservationMap:Map<String,String> = commands.hgetall(keyUserReservation)
             if(commands.hasExpireTime(keyUserReservation)){
                  //pre reservation
-                  return reservationMap.toPreReservation(
+                  return reservationMap.toReservation(
                       commands.ttl(keyUserReservation).toInt()
                   )
             }
         }
          return null
     }
-    private fun Map<String,String>.toPreReservation(
+    private fun Map<String,String>.toReservation(
         remainingTime:Int
-    ):TemporaryReservation? = runCatching{
-        TemporaryReservation(
+    ):Reservation? = runCatching{
+        Reservation(
             userID = getValue(ReservationFieldKeys.USER_ID.value).toLong(),
             car = carRepository.findByIdOrNull(getValue(ReservationFieldKeys.CAR_ID.value).toLong())!!,
             remainingTime = remainingTime
