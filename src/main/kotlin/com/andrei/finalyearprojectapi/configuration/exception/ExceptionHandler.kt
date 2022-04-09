@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.configuration.exception
 
-import com.andrei.finalyearprojectapi.configuration.ApiResponse
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.exceptions.RegisterException
 import com.andrei.finalyearprojectapi.utils.badRequest
@@ -29,7 +29,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler(){
         status: HttpStatus,
         request: WebRequest
     ): ResponseEntity<Any> {
-       return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.Error(ex.firstError()))
+       return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Response.Error(ex.firstError()))
     }
 
     @ExceptionHandler

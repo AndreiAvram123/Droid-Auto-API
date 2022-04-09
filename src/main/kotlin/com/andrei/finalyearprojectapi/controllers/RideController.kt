@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.controllers
 
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.models.OngoingRide
+import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.okResponse
@@ -20,4 +20,5 @@ class RideController(
     ): ResponseWrapper<OngoingRide>{
         return okResponse(rideService.getOngoingRide(user))
     }
+
 }

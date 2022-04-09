@@ -2,8 +2,9 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
+import com.andrei.finalyearprojectapi.entity.redis.*
 import com.andrei.finalyearprojectapi.repositories.CarRepository
+import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
 import io.lettuce.core.api.StatefulRedisConnection
@@ -16,15 +17,10 @@ import org.springframework.stereotype.Service
 class ReservationService(
      redisConnection: StatefulRedisConnection<String, String>,
      private val carRepository: CarRepository,
+     private val userRepository: UserRepository,
      @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
 ) {
 
-    enum class ReservationFieldKeys(val value:String) {
-        USER_ID("userID"), CAR_ID("carID")
-    }
-
-    private val userKeyFormat = "reservation_user_%d"
-    private val carKeyFormat ="reservation_car_%d"
 
     sealed class ReservationResult{
         object NotAvailable:ReservationResult()
@@ -33,50 +29,44 @@ class ReservationService(
 
     private val commands: RedisCommands<String, String> = redisConnection.sync()
 
-    fun makePreReservation(
+    fun makeReservation(
         car:Car,
         user:User
     ):ReservationResult {
-        val keyUser = userKeyFormat.format(user.id)
-        val keyCar = carKeyFormat.format(car.id)
-        if(reservationExists(car.id)){
+        val keyReservation = FormatKeys.userReservation.format(user.id)
+        val keyCar = FormatKeys.car.format(car.id)
+        if(commands.keyExists(keyCar)){
             return ReservationResult.NotAvailable
         }
 
         commands.apply {
-
             hmset(
                 keyCar,
                 mapOf(
-                    ReservationFieldKeys.USER_ID.value to user.id.toString(),
-                    ReservationFieldKeys.CAR_ID.value to car.id.toString()
+                    ReservationKeys.USER_ID.value to user.id.toString(),
+                    CarKeys.STATUS.value to CarStatus.RESERVED.value
                 )
             )
             hmset(
-                keyUser,
+                keyReservation,
                 mapOf(
-                    ReservationFieldKeys.USER_ID.value to user.id.toString(),
-                    ReservationFieldKeys.CAR_ID.value to car.id.toString()
+                    ReservationKeys.USER_ID.value to user.id.toString(),
+                    ReservationKeys.CAR_ID.value to car.id.toString()
                 )
             )
             expire(keyCar,reservationTimeSeconds)
-            expire(keyUser,reservationTimeSeconds)
-
+            expire(keyReservation,reservationTimeSeconds)
         }
 
         return ReservationResult.Reserved
     }
-
-   private fun reservationExists(carID:Long):Boolean {
-       return commands.exists("carID:${carID}") > 0
-   }
 
     fun cancelReservation(
         user:User
     ):Boolean{
         val reservation = getUserReservation(user) ?: return false
         deleteReservationKeys(
-            userID = reservation.userID,
+            userID = reservation.user.id,
             carID = reservation.car.id
         )
 
@@ -89,7 +79,7 @@ class ReservationService(
         user:User
     ):Reservation?{
         //check if user reservation exists
-        val keyUserReservation = userKeyFormat.format(user.id)
+        val keyUserReservation = FormatKeys.userReservation.format(user.id)
         if(commands.keyExists(keyUserReservation)){
             val reservationMap:Map<String,String> = commands.hgetall(keyUserReservation)
             if(commands.hasExpireTime(keyUserReservation)){
@@ -105,8 +95,8 @@ class ReservationService(
         remainingTime:Int
     ):Reservation? = runCatching{
         Reservation(
-            userID = getValue(ReservationFieldKeys.USER_ID.value).toLong(),
-            car = carRepository.findByIdOrNull(getValue(ReservationFieldKeys.CAR_ID.value).toLong())!!,
+            user = userRepository.findByIdOrNull(getValue(ReservationKeys.USER_ID.value).toLong())?: throw Exception(),
+            car = carRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
             remainingTime = remainingTime
         )
     }.getOrNull()
@@ -121,8 +111,8 @@ class ReservationService(
         carID:Long
     ){
         commands.apply {
-            del(userKeyFormat.format(userID))
-            del(carKeyFormat.format(carID))
+            del(FormatKeys.userReservation.format(userID))
+            del(FormatKeys.car.format(carID))
         }
     }
 

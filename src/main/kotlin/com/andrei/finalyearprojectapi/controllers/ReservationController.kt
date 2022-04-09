@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.controllers
 
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.non_persistent.Reservation
+import com.andrei.finalyearprojectapi.entity.redis.Reservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.request.auth.ReservationRequest
 import com.andrei.finalyearprojectapi.services.ReservationService
@@ -25,7 +25,7 @@ class ReservationController (
         user: User
     ):ResponseWrapper<Nothing>{
         val car = carRepository.findByIdOrNull(reservation.carID) ?: return noContent("No car found with this id")
-        val reservationResult = reservationService.makePreReservation(
+        val reservationResult = reservationService.makeReservation(
             car = car,
             user = user
         )
@@ -51,10 +51,6 @@ class ReservationController (
         )
     }
 
-    @PostMapping("/reservation/car/unlock")
-    fun unlockCar():ResponseWrapper<Nothing>{
-        return okResponse()
-    }
 
     @DeleteMapping("/reservation")
     fun cancelReservation(
