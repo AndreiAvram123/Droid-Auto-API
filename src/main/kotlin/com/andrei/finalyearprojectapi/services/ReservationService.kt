@@ -1,5 +1,6 @@
 package com.andrei.finalyearprojectapi.services
 
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
@@ -22,23 +23,23 @@ class ReservationService(
 ) {
 
 
-    sealed class ReservationResult{
-        object NotAvailable:ReservationResult()
-        object Reserved:ReservationResult()
-    }
 
     private val commands: RedisCommands<String, String> = redisConnection.sync()
 
     fun makeReservation(
         car:Car,
         user:User
-    ):ReservationResult {
+    ): Response<Reservation> {
         val keyReservation = FormatKeys.userReservation.format(user.id)
         val keyCar = FormatKeys.car.format(car.id)
         if(commands.keyExists(keyCar)){
-            return ReservationResult.NotAvailable
+            return Response.Error("Not available")
         }
 
+        val reservationMap = mapOf(
+            ReservationKeys.USER_ID.value to user.id.toString(),
+            ReservationKeys.CAR_ID.value to car.id.toString()
+        )
         commands.apply {
             hmset(
                 keyCar,
@@ -49,16 +50,16 @@ class ReservationService(
             )
             hmset(
                 keyReservation,
-                mapOf(
-                    ReservationKeys.USER_ID.value to user.id.toString(),
-                    ReservationKeys.CAR_ID.value to car.id.toString()
-                )
+                reservationMap
             )
+
             expire(keyCar,reservationTimeSeconds)
             expire(keyReservation,reservationTimeSeconds)
         }
 
-        return ReservationResult.Reserved
+        return Response.Success(
+            reservationMap.toReservation(commands.ttl(keyReservation).toInt())
+        )
     }
 
     fun cancelReservation(

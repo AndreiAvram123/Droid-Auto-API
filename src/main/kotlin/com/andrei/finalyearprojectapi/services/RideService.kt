@@ -13,18 +13,26 @@ import org.springframework.stereotype.Service
 interface RideService{
     fun getOngoingRide(user:User): OngoingRide?
     fun startRide(reservation: Reservation):Response<OngoingRide>
+    fun finishRide(user:User):FinishRideResponse
+
+    sealed class FinishRideResponse{
+        object NoRideFound:FinishRideResponse()
+        object UserInCar:FinishRideResponse()
+        object Success:FinishRideResponse()
+    }
 }
 
 @Service
 class RideServiceImpl(
     redisConnection: StatefulRedisConnection<String, String>,
-    private val reservationService: ReservationService,
     private val userRepository: UserRepository,
     private val carRepository: CarRepository
 ) :RideService {
 
 
     private val commands = redisConnection.sync()
+
+
 
     override fun getOngoingRide(user: User): OngoingRide? {
         val keyUserRide = FormatKeys.userRide.format(user.id)
@@ -54,6 +62,16 @@ class RideServiceImpl(
         )
         val ride = rideMap.toRide()?: return Response.Error("Conversion error");
         return Response.Success(ride)
+    }
+
+    override fun finishRide(user: User):  RideService.FinishRideResponse {
+        val ride = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
+
+        return RideService.FinishRideResponse.Success
+
+        //todo
+
+        //communicate with arduino
     }
 
     private fun updateCarStatus(car: Car) {

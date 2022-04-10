@@ -3,7 +3,6 @@ package com.andrei.finalyearprojectapi.entity
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.entity.enums.UserRoleConverter
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.*
 
 @Entity(name = "users")
@@ -19,11 +18,13 @@ class User(
     @Column(nullable = false)
     val email:String ,
     @Column(nullable = false)
+    @JsonIgnore
     val emailVerified:Boolean = false,
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
     @JsonIgnore
     val password:String ,
     @Convert(converter = UserRoleConverter::class)
+    @JsonIgnore
     val role:UserRole = UserRole.USER,
 
     @OneToMany

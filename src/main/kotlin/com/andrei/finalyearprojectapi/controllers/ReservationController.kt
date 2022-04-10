@@ -1,5 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.Reservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
@@ -23,18 +24,20 @@ class ReservationController (
         @Valid
         reservation: ReservationRequest,
         user: User
-    ):ResponseWrapper<Nothing>{
+    ):ResponseWrapper<Reservation>{
         val car = carRepository.findByIdOrNull(reservation.carID) ?: return noContent("No car found with this id")
         val reservationResult = reservationService.makeReservation(
             car = car,
             user = user
         )
-        when(reservationResult){
-            is ReservationService.ReservationResult.Reserved -> {
-                return okResponse()
+        return when(reservationResult){
+            is Response.Success -> {
+                okResponse(
+                    reservationResult.data
+                )
             }
-            is ReservationService.ReservationResult.NotAvailable -> {
-                return errorResponse(
+            is Response.Error -> {
+                errorResponse(
                     code = HttpStatus.CONFLICT ,
                     error = carNotAvailableMessage)
             }
