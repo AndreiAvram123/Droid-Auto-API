@@ -122,7 +122,7 @@ class RideServiceImpl(
     private fun Map<String,String>.toRide():OngoingRide?{
         return runCatching {
             OngoingRide(
-                startedTime = getValue(RideKeys.TIME_STARTED.value).toLong(),
+                startTime = getValue(RideKeys.TIME_STARTED.value).toLong(),
                 car = carRepository.findByIdOrNull(getValue(RideKeys.CAR_ID.value).toLong()) ?: throw Exception(),
                 user = userRepository.findByIdOrNull(getValue(RideKeys.USER_ID.value).toLong()) ?: throw Exception(),
             )
