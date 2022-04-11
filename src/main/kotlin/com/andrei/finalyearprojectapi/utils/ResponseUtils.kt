@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity
 import javax.servlet.http.HttpServletResponse
 
 
+
 typealias ResponseWrapper<T> = ResponseEntity<Response<T>>
+
+typealias NoData = Nothing?
 
 fun  <T> badRequest(error:String): ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Response.Error(error))
-
 
 fun  <T> noContent(error:String): ResponseWrapper<T> =
     ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response.Error(error))
@@ -23,9 +25,9 @@ fun <T> notAcceptable(error: String):ResponseWrapper<T> =
 fun <T> errorResponse(code:HttpStatus, error:String):ResponseWrapper<T> =
     ResponseEntity.status(code).body(Response.Error(error))
 
-fun <T> okResponse(data: T? = null) : ResponseWrapper<T> =
-    ResponseEntity.ok(Response.Success(data))
+fun <T> okResponse(data: T ) : ResponseWrapper<T> = ResponseEntity.ok(Response.Success(data))
 
+fun nothing():ResponseWrapper<NoData> = ResponseEntity.ok(Response.Success(null))
 
 
 fun <T> notAuthorized():ResponseWrapper<T> =

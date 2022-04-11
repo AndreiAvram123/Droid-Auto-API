@@ -9,10 +9,7 @@ import com.andrei.finalyearprojectapi.request.auth.RegisterUserRequest
 import com.andrei.finalyearprojectapi.request.auth.toUser
 import com.andrei.finalyearprojectapi.response.TokenResponse
 import com.andrei.finalyearprojectapi.services.EmailService
-import com.andrei.finalyearprojectapi.utils.JWTUtils
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
-import com.andrei.finalyearprojectapi.utils.badRequest
-import com.andrei.finalyearprojectapi.utils.okResponse
+import com.andrei.finalyearprojectapi.utils.*
 import com.sendgrid.helpers.mail.objects.Email
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
@@ -46,8 +43,8 @@ class AuthController(
 
     @NoAuthenticationRequired
     @GetMapping("/email/valid")
-    fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<Nothing>{
-         userRepository.findTopByEmail(email) ?: return okResponse()
+    fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<NoData>{
+         userRepository.findTopByEmail(email) ?: return nothing()
          return badRequest(errorEmailAlreadyUsed)
     }
 
@@ -55,11 +52,11 @@ class AuthController(
     @PostMapping("/email/verification")
     fun sendVerificationEmail(
         user:User
-    ):ResponseWrapper<Nothing>{
+    ):ResponseWrapper<NoData>{
         emailService.sendVerificationEmail(
            to =  Email(user.email)
         )
-        return okResponse();
+        return nothing()
     }
 
     @PostMapping("/token")

@@ -2,6 +2,7 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.Car
+import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
 import com.andrei.finalyearprojectapi.repositories.CarRepository
@@ -19,7 +20,7 @@ interface RideService{
     sealed class FinishRideResponse{
         object NoRideFound:FinishRideResponse()
         object UserInCar:FinishRideResponse()
-        object Success:FinishRideResponse()
+        data class Success(val finishedRide: FinishedRide):FinishRideResponse()
     }
 }
 
@@ -69,10 +70,12 @@ class RideServiceImpl(
         val ongoingRide = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
 
         val finishedRide = ongoingRide.toFinishedRide()
+        //create charge
+
         finishedRideRepository.save(finishedRide)
 
         clearRideDataRedis(ongoingRide)
-        return RideService.FinishRideResponse.Success
+        return RideService.FinishRideResponse.Success(finishedRide)
 
         //todo
 

@@ -1,12 +1,14 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -22,16 +24,25 @@ class RideController(
         return okResponse(rideService.getOngoingRide(user))
     }
 
-    @PatchMapping("/rides/ongoing")
+    @DeleteMapping("/rides/ongoing")
     fun finishRide(
         user:User
-    ):ResponseWrapper<Nothing>{
-        when(rideService.finishRide(user)){
+    ):ResponseWrapper<FinishedRide>{
+        when(val response = rideService.finishRide(user)){
             is RideService.FinishRideResponse.Success -> {
-                return okResponse()
+                return okResponse(
+                    response.finishedRide
+                )
+            }
+            RideService.FinishRideResponse.NoRideFound -> {
+
+            }
+            RideService.FinishRideResponse.UserInCar -> {
+
+
             }
         }
-        return okResponse()
+        return badRequest("")
     }
 
 }

@@ -47,7 +47,7 @@ class ReservationController (
     @GetMapping("/reservations/current")
     fun getPreReservation(
         user:User
-    ):ResponseWrapper<Reservation> {
+    ):ResponseWrapper<Reservation?> {
         val reservation = reservationService.getUserReservation(user) ?: return okResponse(null)
         return okResponse(
             reservation
@@ -58,10 +58,10 @@ class ReservationController (
     @DeleteMapping("/reservation")
     fun cancelReservation(
         user: User
-    ):ResponseWrapper<Nothing>{
+    ):ResponseWrapper<NoData>{
         val success = reservationService.cancelReservation(user)
         return if(success){
-            okResponse()
+              nothing()
         }else{
             notAcceptable(noReservationFoundMessage)
         }

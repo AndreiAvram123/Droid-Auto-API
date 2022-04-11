@@ -56,10 +56,12 @@ class ReservationService(
             expire(keyCar,reservationTimeSeconds)
             expire(keyReservation,reservationTimeSeconds)
         }
+        val reservation = reservationMap.toReservation(
+            commands.ttl(keyReservation).toInt()
+        )?: return Response.Error("System error")
 
-        return Response.Success(
-            reservationMap.toReservation(commands.ttl(keyReservation).toInt())
-        )
+
+        return Response.Success(reservation)
     }
 
     fun cancelReservation(
