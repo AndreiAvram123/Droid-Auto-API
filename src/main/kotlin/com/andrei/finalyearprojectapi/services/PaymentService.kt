@@ -41,11 +41,13 @@ class PaymentService(
               setCurrency("gbp")
           }.build()
         val paymentIntent = PaymentIntent.create(paymentIntentParameters)
+        val customerKey = stripeUtils.customerKey(customer).id
+
         return  PaymentResponse(
                 clientSecret = paymentIntent.clientSecret,
                 publishableKey = publishableKey,
                 customerID = customer.id,
-                customerKey = stripeUtils.customerKey(customer).id
+                customerKey =  customerKey
         )
 
     }

@@ -24,6 +24,7 @@ class User(
     @Column(
         nullable = true
     )
+    @JsonIgnore
     var stripeCustomerID:String? = null,
 
     @JsonIgnore

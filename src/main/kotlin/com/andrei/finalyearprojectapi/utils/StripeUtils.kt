@@ -27,7 +27,9 @@ class StripeUtils {
         val keyParams = EphemeralKeyCreateParams.Builder()
             .setCustomer(customer.id)
             .build()
-        val requestOptions = RequestOptions.RequestOptionsBuilder().build()
+        val requestOptions = RequestOptions.RequestOptionsBuilder()
+            .setStripeVersionOverride("2020-08-27")
+            .build()
         return  EphemeralKey.create(
             keyParams,
             requestOptions
