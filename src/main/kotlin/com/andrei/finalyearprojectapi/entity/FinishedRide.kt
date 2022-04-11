@@ -13,7 +13,13 @@ class FinishedRide(
      @Column(
          nullable = false
      )
-    val startedTime:Long,
+    val startTime:Long,
+
+    @Column(
+        nullable = false
+    )
+    val endTime:Long,
+
     @Column(
         nullable = false,
     )

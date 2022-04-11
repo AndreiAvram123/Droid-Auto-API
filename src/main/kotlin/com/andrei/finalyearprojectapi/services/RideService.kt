@@ -8,6 +8,7 @@ import com.andrei.finalyearprojectapi.entity.redis.*
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.utils.unixTime
 import io.lettuce.core.api.StatefulRedisConnection
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -50,7 +51,7 @@ class RideServiceImpl(
 
     override fun startRide(reservation: Reservation): Response<OngoingRide> {
 
-        val currentTime = System.currentTimeMillis()/1000L
+        val currentTime = unixTime()
         deleteReservation(reservation)
         updateCarStatus(reservation.car)
         val rideMap =  mapOf(
