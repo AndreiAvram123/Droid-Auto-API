@@ -5,6 +5,7 @@ import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
 import com.andrei.finalyearprojectapi.repositories.CarRepository
+import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import io.lettuce.core.api.StatefulRedisConnection
 import org.springframework.data.repository.findByIdOrNull
@@ -26,7 +27,8 @@ interface RideService{
 class RideServiceImpl(
     redisConnection: StatefulRedisConnection<String, String>,
     private val userRepository: UserRepository,
-    private val carRepository: CarRepository
+    private val carRepository: CarRepository,
+    private val finishedRideRepository: FinishedRideRepository
 ) :RideService {
 
 
@@ -47,15 +49,14 @@ class RideServiceImpl(
 
     override fun startRide(reservation: Reservation): Response<OngoingRide> {
 
-        val currentTime = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()/1000L
         deleteReservation(reservation)
         updateCarStatus(reservation.car)
         val rideMap =  mapOf(
             RideKeys.TIME_STARTED.value to currentTime.toString(),
             RideKeys.CAR_ID.value to reservation.car.id.toString(),
             RideKeys.USER_ID.value to reservation.user.id.toString(),
-
-            )
+        )
         commands.hmset(
             FormatKeys.userRide.format(reservation.user.id),
             rideMap
@@ -65,13 +66,24 @@ class RideServiceImpl(
     }
 
     override fun finishRide(user: User):  RideService.FinishRideResponse {
-        val ride = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
+        val ongoingRide = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
 
+        val finishedRide = ongoingRide.toFinishedRide()
+        finishedRideRepository.save(finishedRide)
+
+        clearRideDataRedis(ongoingRide)
         return RideService.FinishRideResponse.Success
 
         //todo
 
         //communicate with arduino
+    }
+
+    private fun clearRideDataRedis(ride: OngoingRide){
+        val keyUserRide = FormatKeys.userRide.format(ride.user.id)
+        val carKey = FormatKeys.car.format(ride.car.id)
+        commands.del(carKey)
+        commands.del(keyUserRide)
     }
 
     private fun updateCarStatus(car: Car) {
@@ -90,6 +102,7 @@ class RideServiceImpl(
         val key = FormatKeys.userReservation.format(reservation.user.id)
         commands.del(key)
     }
+
 
     private fun Map<String,String>.toRide():OngoingRide?{
         return runCatching {

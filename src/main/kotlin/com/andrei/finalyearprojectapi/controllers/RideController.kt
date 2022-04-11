@@ -18,7 +18,7 @@ class RideController(
     @GetMapping("/rides/ongoing")
     fun getOngoingRide(
         user:User
-    ): ResponseWrapper<OngoingRide>{
+    ): ResponseWrapper<OngoingRide?>{
         return okResponse(rideService.getOngoingRide(user))
     }
 
@@ -26,7 +26,11 @@ class RideController(
     fun finishRide(
         user:User
     ):ResponseWrapper<Nothing>{
-        val response = rideService.finishRide(user)
+        when(rideService.finishRide(user)){
+            is RideService.FinishRideResponse.Success -> {
+                return okResponse()
+            }
+        }
         return okResponse()
     }
 
