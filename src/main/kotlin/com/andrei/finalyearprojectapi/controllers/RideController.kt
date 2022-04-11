@@ -1,19 +1,22 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.entity.FinishedRide
+import com.andrei.finalyearprojectapi.entity.Ride
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
+import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class RideController(
-    private val rideService: RideService
+    private val rideService: RideService,
+    private val finishedRideRepository: FinishedRideRepository
 ) {
 
 
@@ -27,22 +30,39 @@ class RideController(
     @DeleteMapping("/rides/ongoing")
     fun finishRide(
         user:User
-    ):ResponseWrapper<FinishedRide>{
+    ):ResponseWrapper<Ride>{
         when(val response = rideService.finishRide(user)){
             is RideService.FinishRideResponse.Success -> {
                 return okResponse(
-                    response.finishedRide
+                    response.ride
                 )
             }
             RideService.FinishRideResponse.NoRideFound -> {
-
+                return badRequest("")
             }
             RideService.FinishRideResponse.UserInCar -> {
-
-
+                return badRequest("Get out of the car")
             }
         }
-        return badRequest("")
     }
 
+    @GetMapping("/rides/last")
+    fun getLastFinishedRide(
+       user:User
+    ):ResponseWrapper<Ride?> = okResponse(user.rides.lastOrNull())
+
+
+    @GetMapping("/rides")
+    fun getFinishedRides(
+        user:User
+    ):ResponseWrapper<List<Ride>> = okResponse(user.rides)
+
+
+    @GetMapping("/rides/{id}")
+    fun getRideByID(
+        @PathVariable("id") id:Long
+    ):ResponseWrapper<Ride>{
+        val ride = finishedRideRepository.findTopById(id) ?: return badRequest("dfdf")
+        return okResponse(ride)
+    }
 }

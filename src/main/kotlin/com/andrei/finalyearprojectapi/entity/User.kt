@@ -14,10 +14,24 @@ class User(
     @Column(name = "firstName", nullable = false)
     val firstName:String,
     @Column(name = "lastName", nullable = false)
-    val lastName:String ,
+    val lastName:String,
     @Column(nullable = false)
-    val email:String ,
+    val email:String,
     @Column(nullable = false)
+    @JsonIgnore
+    val password:String,
+    @Convert(converter = UserRoleConverter::class)
+    @JsonIgnore
+    val role: UserRole = UserRole.USER,
+
+    @OneToMany
+    @JsonIgnore
+    val ipAddresses:MutableList<IpAddress> = mutableListOf(),
+
+    @OneToMany
+    @JsonIgnore
+    val rides:MutableList<Ride> = mutableListOf(),
+
     @JsonIgnore
     val emailVerified:Boolean = false,
 
@@ -26,14 +40,4 @@ class User(
     )
     @JsonIgnore
     var stripeCustomerID:String? = null,
-
-    @JsonIgnore
-    val password:String ,
-    @Convert(converter = UserRoleConverter::class)
-    @JsonIgnore
-    val role:UserRole = UserRole.USER,
-
-    @OneToMany
-    @JsonIgnore
-    val ipAddresses:MutableList<IpAddress> = mutableListOf()
 )

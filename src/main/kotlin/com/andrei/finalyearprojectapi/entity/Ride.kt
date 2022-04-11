@@ -2,8 +2,8 @@ package com.andrei.finalyearprojectapi.entity
 
 import javax.persistence.*
 
-@Entity
-class FinishedRide(
+@Entity(name  = "finished_ride")
+class Ride(
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -11,7 +11,7 @@ class FinishedRide(
 
     //time in unix
      @Column(
-         nullable = false
+         nullable = false,
      )
     val startTime:Long,
 

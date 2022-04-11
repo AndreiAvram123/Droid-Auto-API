@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.entity.redis
 
 import com.andrei.finalyearprojectapi.entity.Car
-import com.andrei.finalyearprojectapi.entity.FinishedRide
+import com.andrei.finalyearprojectapi.entity.Ride
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.utils.unixTime
 
@@ -16,7 +16,7 @@ fun OngoingRide.elapsedSeconds():Long = unixTime() - this.startTime
 
 fun OngoingRide.totalCharge():Long  = elapsedSeconds() * car.pricePerMinute
 
-fun OngoingRide.toFinishedRide():FinishedRide = FinishedRide(
+fun OngoingRide.toFinishedRide():Ride = Ride(
     id = 0,
     totalCharge = totalCharge(),
     startTime = startTime,
