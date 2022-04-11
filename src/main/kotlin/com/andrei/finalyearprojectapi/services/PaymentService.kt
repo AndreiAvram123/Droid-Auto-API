@@ -38,6 +38,7 @@ class PaymentService(
               setAmount(paymentRequest.amount)
               setAutomaticPaymentMethods(stripeUtils.automaticPaymentMethods())
               setCustomer(customer.id)
+              setSetupFutureUsage(PaymentIntentCreateParams.SetupFutureUsage.OFF_SESSION)
               setCurrency("gbp")
           }.build()
         val paymentIntent = PaymentIntent.create(paymentIntentParameters)
