@@ -19,6 +19,6 @@ class Car(
         name = "price_per_minute",
         nullable = false
     )
-    val pricePerMinute:Double
+    val pricePerMinute:Long
 
 )

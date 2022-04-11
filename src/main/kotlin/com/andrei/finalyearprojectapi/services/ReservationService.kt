@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.services
 
-import com.andrei.finalyearprojectapi.configuration.Response
+import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
@@ -29,11 +29,11 @@ class ReservationService(
     fun makeReservation(
         car:Car,
         user:User
-    ): Response<Reservation> {
+    ): ApiResponse<Reservation> {
         val keyReservation = FormatKeys.userReservation.format(user.id)
         val keyCar = FormatKeys.car.format(car.id)
         if(commands.keyExists(keyCar)){
-            return Response.Error("Not available")
+            return ApiResponse.Error("Not available")
         }
 
         val reservationMap = mapOf(
@@ -58,10 +58,10 @@ class ReservationService(
         }
         val reservation = reservationMap.toReservation(
             commands.ttl(keyReservation).toInt()
-        )?: return Response.Error("System error")
+        )?: return ApiResponse.Error("System error")
 
 
-        return Response.Success(reservation)
+        return ApiResponse.Success(reservation)
     }
 
     fun cancelReservation(

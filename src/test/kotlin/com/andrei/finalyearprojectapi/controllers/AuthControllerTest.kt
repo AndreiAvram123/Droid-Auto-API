@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.controllers
 
 
-import com.andrei.finalyearprojectapi.configuration.Response
+import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.configuration.TestDetails
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
@@ -54,7 +54,7 @@ class AuthControllerTest{
              .perform(loginRequest)
              .andExpect(status().isBadRequest)
              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-             .andExpect(content().json(gson.toJson(Response.Error(InvalidJsonException.errorMessage))))
+             .andExpect(content().json(gson.toJson(ApiResponse.Error(InvalidJsonException.errorMessage))))
     }
     @Test
     fun `Given invalid request json the response code should be 400 and the error should be invalid json`(){
@@ -67,7 +67,7 @@ class AuthControllerTest{
             .perform(loginRequest)
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(gson.toJson(Response.Error(InvalidJsonException.errorMessage))))
+            .andExpect(content().json(gson.toJson(ApiResponse.Error(InvalidJsonException.errorMessage))))
     }
 
     @Test

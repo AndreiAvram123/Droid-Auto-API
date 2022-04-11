@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.services
 
-import com.andrei.finalyearprojectapi.configuration.Response
+import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
@@ -8,6 +8,7 @@ import com.andrei.finalyearprojectapi.entity.redis.*
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.request.auth.PaymentRequest
 import com.andrei.finalyearprojectapi.utils.unixTime
 import io.lettuce.core.api.StatefulRedisConnection
 import org.springframework.data.repository.findByIdOrNull
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service
 
 interface RideService{
     fun getOngoingRide(user:User): OngoingRide?
-    fun startRide(reservation: Reservation):Response<OngoingRide>
+    fun startRide(reservation: Reservation):ApiResponse<OngoingRide>
     fun finishRide(user:User):FinishRideResponse
 
     sealed class FinishRideResponse{
@@ -30,7 +31,8 @@ class RideServiceImpl(
     redisConnection: StatefulRedisConnection<String, String>,
     private val userRepository: UserRepository,
     private val carRepository: CarRepository,
-    private val finishedRideRepository: FinishedRideRepository
+    private val finishedRideRepository: FinishedRideRepository,
+    private val paymentService: PaymentService
 ) :RideService {
 
 
@@ -49,7 +51,7 @@ class RideServiceImpl(
     }
 
 
-    override fun startRide(reservation: Reservation): Response<OngoingRide> {
+    override fun startRide(reservation: Reservation): ApiResponse<OngoingRide> {
 
         val currentTime = unixTime()
         deleteReservation(reservation)
@@ -63,8 +65,16 @@ class RideServiceImpl(
             FormatKeys.userRide.format(reservation.user.id),
             rideMap
         )
-        val ride = rideMap.toRide()?: return Response.Error("Conversion error");
-        return Response.Success(ride)
+        val ride = rideMap.toRide()?: return ApiResponse.Error("Conversion error");
+        return ApiResponse.Success(ride)
+    }
+
+    private fun chargeUser(finishedRide: FinishedRide){
+         val paymentRequest = PaymentRequest(
+             amount = finishedRide.totalCharge,
+             user = finishedRide.user
+         )
+        paymentService.chargeFuturePayment(paymentRequest)
     }
 
     override fun finishRide(user: User):  RideService.FinishRideResponse {
@@ -73,6 +83,7 @@ class RideServiceImpl(
         val finishedRide = ongoingRide.toFinishedRide()
         //create charge
 
+        chargeUser(finishedRide)
         finishedRideRepository.save(finishedRide)
 
         clearRideDataRedis(ongoingRide)

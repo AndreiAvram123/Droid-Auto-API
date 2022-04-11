@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.configuration.Response
+import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.Reservation
 import com.andrei.finalyearprojectapi.repositories.CarRepository
@@ -31,12 +31,12 @@ class ReservationController (
             user = user
         )
         return when(reservationResult){
-            is Response.Success -> {
+            is ApiResponse.Success -> {
                 okResponse(
                     reservationResult.data
                 )
             }
-            is Response.Error -> {
+            is ApiResponse.Error -> {
                 errorResponse(
                     code = HttpStatus.CONFLICT ,
                     error = carNotAvailableMessage)

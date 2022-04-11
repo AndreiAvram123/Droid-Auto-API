@@ -14,7 +14,7 @@ data class OngoingRide(
 
 fun OngoingRide.elapsedSeconds():Long = System.currentTimeMillis()/1000L - this.startedTime
 
-fun OngoingRide.totalCharge():Double  = elapsedSeconds() * car.pricePerMinute
+fun OngoingRide.totalCharge():Long  = elapsedSeconds() * car.pricePerMinute
 
 fun OngoingRide.toFinishedRide():FinishedRide = FinishedRide(
     id = 0,

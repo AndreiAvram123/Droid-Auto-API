@@ -21,6 +21,11 @@ class User(
     @JsonIgnore
     val emailVerified:Boolean = false,
 
+    @Column(
+        nullable = true
+    )
+    var stripeCustomerID:String? = null,
+
     @JsonIgnore
     val password:String ,
     @Convert(converter = UserRoleConverter::class)

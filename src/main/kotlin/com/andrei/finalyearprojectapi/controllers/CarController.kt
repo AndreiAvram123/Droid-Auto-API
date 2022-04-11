@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.configuration.Response
+import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
@@ -54,8 +54,8 @@ class CarController(
             reservation
         )
         return when(response){
-            is Response.Error -> badRequest("Cannot unlock car")
-            is Response.Success -> okResponse(response.data)
+            is ApiResponse.Error -> badRequest("Cannot unlock car")
+            is ApiResponse.Success -> okResponse(response.data)
         }
     }
 

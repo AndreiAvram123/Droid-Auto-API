@@ -1,5 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.request.auth.PaymentRequest
 import com.andrei.finalyearprojectapi.response.PaymentResponse
 import com.andrei.finalyearprojectapi.services.PaymentService
@@ -15,9 +16,12 @@ class PaymentController(
 
     private val unlockFee = 200L
     @PostMapping("/payment/unlock_fee")
-    fun createPayment():ResponseWrapper<PaymentResponse>{
+    fun createPayment(
+        user:User
+    ):ResponseWrapper<PaymentResponse>{
         val paymentRequest = PaymentRequest(
-            amount = unlockFee
+            amount = unlockFee,
+            user = user
         )
        val paymentResponse =  paymentService.createPaymentResponse(paymentRequest)
 

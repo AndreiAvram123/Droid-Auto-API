@@ -23,7 +23,7 @@ class FinishedRide(
     @Column(
         nullable = false,
     )
-    val totalCharge:Double,
+    val totalCharge:Long,
 
     @ManyToOne
     val user:User,
