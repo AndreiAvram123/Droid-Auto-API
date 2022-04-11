@@ -4,12 +4,11 @@ import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.PaymentRequest
 import com.andrei.finalyearprojectapi.response.PaymentResponse
+import com.andrei.finalyearprojectapi.utils.StripeUtils
 import com.stripe.Stripe
 import com.stripe.model.Customer
 import com.stripe.model.PaymentIntent
-import com.stripe.model.PaymentMethodCollection
 import com.stripe.param.CustomerCreateParams
-import com.stripe.param.CustomerListPaymentMethodsParams
 import com.stripe.param.PaymentIntentCreateParams
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -21,21 +20,13 @@ class PaymentService(
     private val stripeSecretKey:String,
     @Value("\${paymentService.publishableKey}")
     private val publishableKey:String,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val stripeUtils:StripeUtils
 ) {
     init {
         Stripe.apiKey = stripeSecretKey
     }
 
-    private fun automaticPaymentMethods():PaymentIntentCreateParams.AutomaticPaymentMethods=
-        PaymentIntentCreateParams.AutomaticPaymentMethods.Builder().setEnabled(true).build()
-
-    private fun customerPaymentMethods(customer: Customer):PaymentMethodCollection{
-        val params = CustomerListPaymentMethodsParams.builder()
-            .setType(CustomerListPaymentMethodsParams.Type.CARD)
-            .build()
-        return customer.listPaymentMethods(params)
-    }
 
     fun createPaymentResponse(
         paymentRequest: PaymentRequest
@@ -45,12 +36,17 @@ class PaymentService(
         val customer = getStripeCustomer(paymentRequest.user) ?: createStripeCustomer(paymentRequest.user)
         val paymentIntentParameters = PaymentIntentCreateParams.Builder().apply {
               setAmount(paymentRequest.amount)
-              setAutomaticPaymentMethods(automaticPaymentMethods())
+              setAutomaticPaymentMethods(stripeUtils.automaticPaymentMethods())
               setCustomer(customer.id)
               setCurrency("gbp")
           }.build()
         val paymentIntent = PaymentIntent.create(paymentIntentParameters)
-        return paymentIntent.toPaymentResponse()
+        return  PaymentResponse(
+                clientSecret = paymentIntent.clientSecret,
+                publishableKey = publishableKey,
+                customerID = customer.id,
+                customerKey = stripeUtils.customerKey(customer).id
+        )
 
     }
 
@@ -58,7 +54,7 @@ class PaymentService(
         paymentRequest: PaymentRequest
     ):Result<PaymentIntent> {
         val customer = getStripeCustomer(paymentRequest.user) ?: createStripeCustomer(paymentRequest.user)
-        val paymentMethod = customerPaymentMethods(customer).data.first()
+        val paymentMethod = stripeUtils.customerPaymentMethods(customer).data.first()
         val paymentIntentParameters = PaymentIntentCreateParams.Builder().apply {
             setPaymentMethod(paymentMethod.id)
             setAmount(paymentRequest.amount)
@@ -70,7 +66,7 @@ class PaymentService(
         return runCatching {
             PaymentIntent.create(paymentIntentParameters)
         }.onFailure {
-
+           println(it.message)
         }
     }
 
@@ -96,11 +92,5 @@ class PaymentService(
     }
 
 
-    fun PaymentIntent.toPaymentResponse(): PaymentResponse{
-        return PaymentResponse(
-            clientSecret = clientSecret,
-            publishableKey = publishableKey
-        )
-    }
 
 }
