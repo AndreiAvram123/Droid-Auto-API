@@ -30,7 +30,7 @@ class User(
 
     @OneToMany
     @JsonIgnore
-    val rides:MutableList<Ride> = mutableListOf(),
+    val finishedRides:MutableList<FinishedRide> = mutableListOf(),
 
     @JsonIgnore
     val emailVerified:Boolean = false,

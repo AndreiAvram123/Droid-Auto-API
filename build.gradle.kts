@@ -29,15 +29,18 @@ repositories {
     }
 
 
+
 }
 
 dependencies {
 
     val mockkVersion = "1.12.3"
+    implementation ("com.hivemq:hivemq-mqtt-client:1.2.1")
 
 
-   //payment
-    implementation ("com.stripe:stripe-java:20.111.0")
+
+    //payment
+    implementation ("com.stripe:stripe-java:20.113.0")
 
     //email service
     implementation ("com.sendgrid:sendgrid-java:4.9.1")
@@ -48,7 +51,7 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.9.0")
 
     //jwt
-    implementation("com.auth0:java-jwt:3.19.0")
+    implementation("com.auth0:java-jwt:3.19.1")
 
     //security
     implementation("org.springframework.boot:spring-boot-starter-security:2.6.5")

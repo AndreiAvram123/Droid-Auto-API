@@ -22,7 +22,8 @@ class AuthController(
     private val passwordEncoder: BCryptPasswordEncoder,
     private val emailService: EmailService,
     private val jwtUtils: JWTUtils
-) {
+) :Controller(){
+
 
     @PostMapping("/register")
     @NoAuthenticationRequired
@@ -93,5 +94,9 @@ class AuthController(
 
     companion object{
         const val errorEmailAlreadyUsed = "Email already used"
+    }
+
+    final override fun registerController() {
+         Controllers.add(this::class)
     }
 }

@@ -1,19 +1,21 @@
 package com.andrei.finalyearprojectapi.utils
 
-import com.andrei.finalyearprojectapi.controllers.AuthController
-import com.andrei.finalyearprojectapi.controllers.CarController
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
-val controllers:List<KClass<out Any>> = listOf(
-   AuthController::class,
-   CarController::class
-)
+object Controllers{
+    private val  controllers:MutableList<KClass<out Any>> = mutableListOf()
+
+    fun add(controller: KClass<out Any>){
+        controllers.add(controller)
+    }
+
+    fun all() = controllers
+}
+
 
  fun KAnnotatedElement.getRequestMethodWithPath(controllerPrefixPath:String):RequestMethodWithPath{
     val getAnnotation = findAnnotation<GetMapping>()
@@ -41,7 +43,7 @@ val controllers:List<KClass<out Any>> = listOf(
  */
  inline fun <reified T : Annotation>findEndpointsWithAnnotation():List<RequestMethodWithPath>{
     val routes = mutableListOf<RequestMethodWithPath>()
-    controllers.forEach { kClassController->
+    Controllers.all().forEach { kClassController->
         //for some controllers a default route can be declared such as /api
 
         val controllerPrefixPath = kClassController.findAnnotation<RequestMapping>()?.value?.firstOrNull() ?: ""

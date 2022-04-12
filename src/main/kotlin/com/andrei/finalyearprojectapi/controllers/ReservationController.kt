@@ -16,7 +16,8 @@ import javax.validation.Valid
 class ReservationController (
     private val carRepository: CarRepository,
     private val reservationService: ReservationService
-    ){
+    ):Controller(){
+
 
     @PostMapping("/reservation")
     fun makeReservation(
@@ -70,5 +71,9 @@ class ReservationController (
     companion object{
         const val carNotAvailableMessage:String  = "Car not available at the moment"
         const val noReservationFoundMessage:String  = "No reservation found"
+    }
+
+    override fun registerController() {
+        Controllers.add(this::class)
     }
 }

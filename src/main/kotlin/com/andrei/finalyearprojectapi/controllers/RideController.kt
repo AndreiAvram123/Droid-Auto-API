@@ -1,10 +1,11 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.entity.Ride
+import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.services.RideService
+import com.andrei.finalyearprojectapi.utils.Controllers
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class RideController(
     private val rideService: RideService,
     private val finishedRideRepository: FinishedRideRepository
-) {
+) :Controller(){
 
 
     @GetMapping("/rides/ongoing")
@@ -30,11 +31,11 @@ class RideController(
     @DeleteMapping("/rides/ongoing")
     fun finishRide(
         user:User
-    ):ResponseWrapper<Ride>{
+    ):ResponseWrapper<FinishedRide>{
         when(val response = rideService.finishRide(user)){
             is RideService.FinishRideResponse.Success -> {
                 return okResponse(
-                    response.ride
+                    response.finishedRide
                 )
             }
             RideService.FinishRideResponse.NoRideFound -> {
@@ -49,20 +50,24 @@ class RideController(
     @GetMapping("/rides/last")
     fun getLastFinishedRide(
        user:User
-    ):ResponseWrapper<Ride?> = okResponse(user.rides.lastOrNull())
+    ):ResponseWrapper<FinishedRide?> = okResponse(user.finishedRides.lastOrNull())
 
 
     @GetMapping("/rides")
     fun getFinishedRides(
         user:User
-    ):ResponseWrapper<List<Ride>> = okResponse(user.rides)
+    ):ResponseWrapper<List<FinishedRide>> = okResponse(user.finishedRides)
 
 
     @GetMapping("/rides/{id}")
     fun getRideByID(
         @PathVariable("id") id:Long
-    ):ResponseWrapper<Ride>{
+    ):ResponseWrapper<FinishedRide>{
         val ride = finishedRideRepository.findTopById(id) ?: return badRequest("dfdf")
         return okResponse(ride)
+    }
+
+    override fun registerController() {
+        Controllers.add(this::class)
     }
 }

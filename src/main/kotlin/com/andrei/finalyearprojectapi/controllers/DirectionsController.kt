@@ -3,6 +3,7 @@ package com.andrei.finalyearprojectapi.controllers
 import com.andrei.finalyearprojectapi.request.auth.DirectionsRequest
 import com.andrei.finalyearprojectapi.response.DirectionsResponse
 import com.andrei.finalyearprojectapi.services.MapsService
+import com.andrei.finalyearprojectapi.utils.Controllers
 import com.andrei.finalyearprojectapi.utils.ResponseWrapper
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DirectionsController(
     private val mapsService: MapsService
-) {
-
+):Controller() {
 
     @GetMapping("/directions")
     fun getDirections(
@@ -32,5 +32,9 @@ class DirectionsController(
               )
           )
       )
+    }
+
+    final override fun registerController() {
+        Controllers.add(this::class)
     }
 }

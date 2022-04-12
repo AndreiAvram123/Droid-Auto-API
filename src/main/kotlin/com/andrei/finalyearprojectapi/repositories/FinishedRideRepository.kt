@@ -1,8 +1,8 @@
 package com.andrei.finalyearprojectapi.repositories
 
-import com.andrei.finalyearprojectapi.entity.Ride
+import com.andrei.finalyearprojectapi.entity.FinishedRide
 import org.springframework.data.repository.CrudRepository
 
-sealed interface FinishedRideRepository: CrudRepository<Ride,Long>{
-    fun findTopById(id:Long):Ride?
+sealed interface FinishedRideRepository: CrudRepository<FinishedRide,Long>{
+    fun findTopById(id:Long):FinishedRide?
 }

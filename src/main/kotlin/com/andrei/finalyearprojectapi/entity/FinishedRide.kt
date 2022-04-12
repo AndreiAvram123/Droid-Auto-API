@@ -1,9 +1,8 @@
 package com.andrei.finalyearprojectapi.entity
 
 import javax.persistence.*
-
-@Entity(name  = "finished_ride")
-class Ride(
+@Entity
+class FinishedRide(
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

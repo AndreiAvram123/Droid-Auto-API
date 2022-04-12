@@ -7,10 +7,7 @@ import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.services.ReservationService
 import com.andrei.finalyearprojectapi.services.RideService
-import com.andrei.finalyearprojectapi.utils.LocationUtils
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
-import com.andrei.finalyearprojectapi.utils.badRequest
-import com.andrei.finalyearprojectapi.utils.okResponse
+import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,7 +21,9 @@ class CarController(
     private val nearbyCarsDistance:Long,
     private val rideService: RideService,
     private val reservationService: ReservationService
-) {
+) :Controller(){
+
+
     @GetMapping("/nearby")
     fun getNearbyCars(
         @RequestParam latitude:Double,
@@ -57,6 +56,10 @@ class CarController(
             is ApiResponse.Error -> badRequest("Cannot unlock car")
             is ApiResponse.Success -> okResponse(response.data)
         }
+    }
+
+    final override fun registerController() {
+        Controllers.add(this::class)
     }
 
 }
