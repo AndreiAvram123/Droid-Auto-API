@@ -6,7 +6,7 @@ enum class ReservationKeys(val value:String) {
 
 
 enum class CarKeys(val value:String){
-    STATUS("status"), CAR_ID("car.id"), LATITUDE("latitude"), LONGITUDE("longitude")
+    STATUS("status"), CAR_ID("car.id"), LATITUDE("latitude"), LONGITUDE("longitude"), LOCATION_UPDATED_AT("location.updated_at")
 }
 enum class RideKeys(val value :String){
     TIME_STARTED("time.started"),

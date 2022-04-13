@@ -3,6 +3,7 @@ package com.andrei.finalyearprojectapi.Mqqt.topics
 import com.andrei.finalyearprojectapi.entity.LatLng
 import com.andrei.finalyearprojectapi.entity.redis.CarKeys
 import com.andrei.finalyearprojectapi.entity.redis.RedisKeys
+import com.andrei.finalyearprojectapi.utils.unixTime
 import com.google.gson.Gson
 import com.hivemq.client.mqtt.datatypes.MqttTopic
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish
@@ -72,6 +73,7 @@ class CarLocationTopic(
         commands.hmset(
             carKey,
             mapOf(
+                CarKeys.LOCATION_UPDATED_AT.value to unixTime().toString(),
                 CarKeys.LATITUDE.value to location.latitude.toString(),
                 CarKeys.LONGITUDE.value to location.longitude.toString()
             )
