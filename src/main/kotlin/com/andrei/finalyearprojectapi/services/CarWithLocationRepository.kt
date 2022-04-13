@@ -46,7 +46,7 @@ class CarWithLocationRepositoryImpl(
             keyCar
         )
         //location is not considered valid if it was not updated within the last 40 seconds
-        val lastUpdatedTime = carHash.getValue(CarKeys.LOCATION_UPDATED_AT.value).toLongOrNull() ?: return null
+        val lastUpdatedTime = carHash[CarKeys.LOCATION_UPDATED_AT.value]?.toLongOrNull() ?: return null
         if(lastUpdatedTime + invalidateLocationSeconds < unixTime()){
             return null
         }
