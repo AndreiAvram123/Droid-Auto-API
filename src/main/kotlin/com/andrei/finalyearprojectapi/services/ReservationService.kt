@@ -4,7 +4,7 @@ import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
-import com.andrei.finalyearprojectapi.repositories.CarRepository
+import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class ReservationService(
-     redisConnection: StatefulRedisConnection<String, String>,
-     private val carRepository: CarRepository,
-     private val userRepository: UserRepository,
-     @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
+    redisConnection: StatefulRedisConnection<String, String>,
+    private val simpleCarRepository: SimpleCarRepository,
+    private val userRepository: UserRepository,
+    @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
 ) {
 
 
@@ -30,8 +30,8 @@ class ReservationService(
         car:Car,
         user:User
     ): ApiResponse<Reservation> {
-        val keyReservation = FormatKeys.userReservation.format(user.id)
-        val keyCar = FormatKeys.car.format(car.id)
+        val keyReservation = RedisKeys.userReservation.format(user.id)
+        val keyCar = RedisKeys.car.format(car.id)
         if(commands.keyExists(keyCar)){
             return ApiResponse.Error("Not available")
         }
@@ -82,7 +82,7 @@ class ReservationService(
         user:User
     ):Reservation?{
         //check if user reservation exists
-        val keyUserReservation = FormatKeys.userReservation.format(user.id)
+        val keyUserReservation = RedisKeys.userReservation.format(user.id)
         if(commands.keyExists(keyUserReservation)){
             val reservationMap:Map<String,String> = commands.hgetall(keyUserReservation)
             if(commands.hasExpireTime(keyUserReservation)){
@@ -99,7 +99,7 @@ class ReservationService(
     ):Reservation? = runCatching{
         Reservation(
             user = userRepository.findByIdOrNull(getValue(ReservationKeys.USER_ID.value).toLong())?: throw Exception(),
-            car = carRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
+            car = simpleCarRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
             remainingTime = remainingTime
         )
     }.getOrNull()
@@ -114,8 +114,8 @@ class ReservationService(
         carID:Long
     ){
         commands.apply {
-            del(FormatKeys.userReservation.format(userID))
-            del(FormatKeys.car.format(carID))
+            del(RedisKeys.userReservation.format(userID))
+            del(RedisKeys.car.format(carID))
         }
     }
 

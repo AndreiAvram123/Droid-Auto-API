@@ -1,16 +1,20 @@
 package com.andrei.finalyearprojectapi.utils
 
+import com.andrei.finalyearprojectapi.controllers.Controller
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.isSubclassOf
 
 object Controllers{
     private val  controllers:MutableList<KClass<out Any>> = mutableListOf()
 
     fun add(controller: KClass<out Any>){
-        controllers.add(controller)
+        if(controller.isSubclassOf(Controller::class)){
+            controllers.add(controller)
+        }
     }
 
     fun all() = controllers

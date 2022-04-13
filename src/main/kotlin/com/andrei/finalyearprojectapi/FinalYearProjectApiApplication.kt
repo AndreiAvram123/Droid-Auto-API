@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi
 
-import com.andrei.finalyearprojectapi.configuration.beans.MqqtMessageGateway
+import com.andrei.finalyearprojectapi.Mqqt.MqqtMessageGateway
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.runApplication

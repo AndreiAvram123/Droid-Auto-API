@@ -5,8 +5,8 @@ import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
-import com.andrei.finalyearprojectapi.repositories.CarRepository
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
+import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.PaymentRequest
 import com.andrei.finalyearprojectapi.utils.unixTime
@@ -30,7 +30,7 @@ interface RideService{
 class RideServiceImpl(
     redisConnection: StatefulRedisConnection<String, String>,
     private val userRepository: UserRepository,
-    private val carRepository: CarRepository,
+    private val simpleCarRepository: SimpleCarRepository,
     private val finishedRideRepository: FinishedRideRepository,
     private val paymentService: PaymentService
 ) :RideService {
@@ -41,7 +41,7 @@ class RideServiceImpl(
 
 
     override fun getOngoingRide(user: User): OngoingRide? {
-        val keyUserRide = FormatKeys.userRide.format(user.id)
+        val keyUserRide = RedisKeys.userRide.format(user.id)
 
         val ongoingRideMap =  commands.hgetall(keyUserRide)
         if(ongoingRideMap.isEmpty()){
@@ -62,7 +62,7 @@ class RideServiceImpl(
             RideKeys.USER_ID.value to reservation.user.id.toString(),
         )
         commands.hmset(
-            FormatKeys.userRide.format(reservation.user.id),
+            RedisKeys.userRide.format(reservation.user.id),
             rideMap
         )
         val ride = rideMap.toRide()?: return ApiResponse.Error("Conversion error");
@@ -95,14 +95,14 @@ class RideServiceImpl(
     }
 
     private fun clearRideDataRedis(ride: OngoingRide){
-        val keyUserRide = FormatKeys.userRide.format(ride.user.id)
-        val carKey = FormatKeys.car.format(ride.car.id)
+        val keyUserRide = RedisKeys.userRide.format(ride.user.id)
+        val carKey = RedisKeys.car.format(ride.car.id)
         commands.del(carKey)
         commands.del(keyUserRide)
     }
 
     private fun updateCarStatus(car: Car) {
-        val carKey = FormatKeys.car.format(car.id)
+        val carKey = RedisKeys.car.format(car.id)
         commands.apply {
             persist(carKey)
             hset(
@@ -114,7 +114,7 @@ class RideServiceImpl(
         }
     }
     private fun deleteReservation(reservation: Reservation){
-        val key = FormatKeys.userReservation.format(reservation.user.id)
+        val key = RedisKeys.userReservation.format(reservation.user.id)
         commands.del(key)
     }
 
@@ -123,7 +123,7 @@ class RideServiceImpl(
         return runCatching {
             OngoingRide(
                 startTime = getValue(RideKeys.TIME_STARTED.value).toLong(),
-                car = carRepository.findByIdOrNull(getValue(RideKeys.CAR_ID.value).toLong()) ?: throw Exception(),
+                car = simpleCarRepository.findByIdOrNull(getValue(RideKeys.CAR_ID.value).toLong()) ?: throw Exception(),
                 user = userRepository.findByIdOrNull(getValue(RideKeys.USER_ID.value).toLong()) ?: throw Exception(),
             )
         }.getOrNull()

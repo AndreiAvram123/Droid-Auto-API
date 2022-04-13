@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.entity.redis
 
-object FormatKeys{
+object RedisKeys{
 
      const val userReservation = "user.reservation:%d"
 

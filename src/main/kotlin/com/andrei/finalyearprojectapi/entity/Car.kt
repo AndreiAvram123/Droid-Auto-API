@@ -12,8 +12,6 @@ class Car(
     @ManyToOne
     val model:CarModel,
 
-    @Embedded
-    val location:LatLng,
 
     @Column(
         name = "price_per_minute",

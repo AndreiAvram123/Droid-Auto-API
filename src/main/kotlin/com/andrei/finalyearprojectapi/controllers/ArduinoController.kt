@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.controllers
 
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
-import com.andrei.finalyearprojectapi.configuration.beans.MqqtMessageGateway
+import com.andrei.finalyearprojectapi.Mqqt.MqqtMessageGateway
 import com.andrei.finalyearprojectapi.utils.Controllers
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController

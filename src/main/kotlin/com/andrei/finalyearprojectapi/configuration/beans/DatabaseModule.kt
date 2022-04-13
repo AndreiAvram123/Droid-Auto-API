@@ -1,6 +1,9 @@
 package com.andrei.finalyearprojectapi.configuration.beans
 
+import com.andrei.finalyearprojectapi.Mqqt.MqqtCredentials
 import com.andrei.finalyearprojectapi.utils.withNoRedisUsername
+import com.hivemq.client.mqtt.MqttClient
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import io.lettuce.core.api.StatefulRedisConnection
@@ -24,5 +27,18 @@ class DatabaseModule(
             val redisClient = RedisClient.create(redisURI)
             return redisClient.connect()
       }
+
+      @Bean
+      @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+      fun provideMqttClient(
+            credentials: MqqtCredentials
+      ): Mqtt5BlockingClient = MqttClient.builder()
+            .useMqttVersion5()
+            .serverHost(credentials.host)
+            .serverPort(8883)
+            .sslWithDefaultConfig()
+            .buildBlocking()
+
+
 
 }
