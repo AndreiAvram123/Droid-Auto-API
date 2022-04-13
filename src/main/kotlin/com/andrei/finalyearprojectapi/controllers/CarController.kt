@@ -30,8 +30,6 @@ class CarController(
         @RequestParam longitude:Double
     ):ResponseWrapper<List<CarWithLocation>>{
 
-        //todo
-        //add redis logic here
         return okResponse(
             carWithLocationRepository.findAll().filter { car->
                 LocationUtils.distance(
