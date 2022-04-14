@@ -1,5 +1,7 @@
 package com.andrei.finalyearprojectapi.services
 
+import com.andrei.finalyearprojectapi.Mqqt.commands.LockCarCommand
+import com.andrei.finalyearprojectapi.Mqqt.commands.UnlockCarCommand
 import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.FinishedRide
@@ -32,7 +34,9 @@ class RideServiceImpl(
     private val userRepository: UserRepository,
     private val simpleCarRepository: SimpleCarRepository,
     private val finishedRideRepository: FinishedRideRepository,
-    private val paymentService: PaymentService
+    private val paymentService: PaymentService,
+    private val unlockCarCommand: UnlockCarCommand,
+    private val lockCarCommand: LockCarCommand
 ) :RideService {
 
 
@@ -66,6 +70,7 @@ class RideServiceImpl(
             rideMap
         )
         val ride = rideMap.toRide()?: return ApiResponse.Error("Conversion error");
+        unlockCarCommand.execute(reservation.car.id)
         return ApiResponse.Success(ride)
     }
 
@@ -87,11 +92,8 @@ class RideServiceImpl(
         finishedRideRepository.save(finishedRide)
 
         clearRideDataRedis(ongoingRide)
+        lockCarCommand.execute(finishedRide.car.id)
         return RideService.FinishRideResponse.Success(finishedRide)
-
-        //todo
-
-        //communicate with arduino
     }
 
     private fun clearRideDataRedis(ride: OngoingRide){

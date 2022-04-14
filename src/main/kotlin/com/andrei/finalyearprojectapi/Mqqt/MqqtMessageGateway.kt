@@ -1,7 +1,7 @@
 package com.andrei.finalyearprojectapi.Mqqt
 
 import com.andrei.finalyearprojectapi.Mqqt.topics.CarLocationTopic
-import com.andrei.finalyearprojectapi.Mqqt.topics.UnlockCarCommand
+import com.andrei.finalyearprojectapi.Mqqt.commands.UnlockCarCommand
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient
