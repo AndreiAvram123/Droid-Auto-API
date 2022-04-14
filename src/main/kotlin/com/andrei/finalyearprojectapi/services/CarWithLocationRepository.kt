@@ -8,10 +8,12 @@ import com.andrei.finalyearprojectapi.models.CarWithLocation
 import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
 import com.andrei.finalyearprojectapi.utils.unixTime
 import io.lettuce.core.api.StatefulRedisConnection
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 interface CarWithLocationRepository{
     fun findAll():List<CarWithLocation>
+    fun findByIdOrNull(id:Long):CarWithLocation?
 }
 
 
@@ -39,6 +41,15 @@ class CarWithLocationRepositoryImpl(
         }
     }
 
+    override fun findByIdOrNull(id: Long): CarWithLocation? {
+         val car = simpleCarRepository.findByIdOrNull(id)  ?: return null
+         val location = getCarLocation(car)  ?: return null
+         return CarWithLocation(
+            car = car,
+            location = location
+        )
+    }
+
 
     private fun getCarLocation(car: Car):LatLng?{
         val keyCar = RedisKeys.car.format(car.id)
@@ -50,7 +61,6 @@ class CarWithLocationRepositoryImpl(
         if(lastUpdatedTime + invalidateLocationSeconds < unixTime()){
             return null
         }
-
         return runCatching {
             LatLng(
                 latitude = carHash.getValue(CarKeys.LATITUDE.value).toDouble(),

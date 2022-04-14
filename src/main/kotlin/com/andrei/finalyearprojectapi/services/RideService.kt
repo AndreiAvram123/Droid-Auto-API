@@ -55,10 +55,10 @@ class RideServiceImpl(
 
         val currentTime = unixTime()
         deleteReservation(reservation)
-        updateCarStatus(reservation.car)
+        updateCarStatus(reservation.carWithLocation.car)
         val rideMap =  mapOf(
             RideKeys.TIME_STARTED.value to currentTime.toString(),
-            RideKeys.CAR_ID.value to reservation.car.id.toString(),
+            RideKeys.CAR_ID.value to reservation.carWithLocation.car.id.toString(),
             RideKeys.USER_ID.value to reservation.user.id.toString(),
         )
         commands.hmset(

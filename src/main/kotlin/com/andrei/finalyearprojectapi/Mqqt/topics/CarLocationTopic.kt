@@ -12,7 +12,7 @@ import io.lettuce.core.api.sync.RedisCommands
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 
-interface ITopic{
+interface SubscribeTopic{
     val route:String
     fun matchesRoute(topic: MqttTopic):Boolean
     fun handleAction(callbackData: Mqtt5Publish)
@@ -23,7 +23,7 @@ interface ITopic{
 class CarLocationTopic(
     redisConnection: StatefulRedisConnection<String, String>,
     private val gson: Gson
-) : ITopic{
+) : SubscribeTopic{
 
     internal data class Payload(
         val latitude:Double,

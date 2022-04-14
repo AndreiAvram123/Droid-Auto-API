@@ -1,6 +1,7 @@
 package com.andrei.finalyearprojectapi.Mqqt
 
 import com.andrei.finalyearprojectapi.Mqqt.topics.CarLocationTopic
+import com.andrei.finalyearprojectapi.Mqqt.topics.UnlockCarCommand
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient
@@ -11,7 +12,8 @@ import java.nio.charset.StandardCharsets
 class MqqtMessageGateway(
     private val client: Mqtt5BlockingClient,
     private val carLocationTopic: CarLocationTopic,
-    private val credentials: MqqtCredentials
+    private val credentials: MqqtCredentials,
+    private val unlockCarCommand: UnlockCarCommand
 ){
 
     fun configure(){

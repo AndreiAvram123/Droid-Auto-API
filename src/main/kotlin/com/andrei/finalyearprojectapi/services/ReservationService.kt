@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service
 class ReservationService(
     redisConnection: StatefulRedisConnection<String, String>,
     private val simpleCarRepository: SimpleCarRepository,
+    private val carWithLocationRepository: CarWithLocationRepository,
     private val userRepository: UserRepository,
     @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
 ) {
@@ -70,7 +71,7 @@ class ReservationService(
         val reservation = getUserReservation(user) ?: return false
         deleteReservationKeys(
             userID = reservation.user.id,
-            carID = reservation.car.id
+            carID = reservation.carWithLocation.car.id
         )
 
         return true
@@ -99,7 +100,7 @@ class ReservationService(
     ):Reservation? = runCatching{
         Reservation(
             user = userRepository.findByIdOrNull(getValue(ReservationKeys.USER_ID.value).toLong())?: throw Exception(),
-            car = simpleCarRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
+            carWithLocation = carWithLocationRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
             remainingTime = remainingTime
         )
     }.getOrNull()
