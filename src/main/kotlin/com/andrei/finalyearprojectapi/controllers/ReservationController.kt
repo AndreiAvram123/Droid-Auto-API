@@ -19,7 +19,7 @@ class ReservationController (
     ):Controller(){
 
 
-    @PostMapping("/reservation")
+    @PostMapping("/reservations/current")
     fun makeReservation(
         @RequestBody
         @Valid
@@ -46,7 +46,7 @@ class ReservationController (
     }
 
     @GetMapping("/reservations/current")
-    fun getPreReservation(
+    fun getCurrentReservation(
         user:User
     ):ResponseWrapper<Reservation?> {
         val reservation = reservationService.getUserReservation(user) ?: return okResponse(null)
@@ -56,7 +56,7 @@ class ReservationController (
     }
 
 
-    @DeleteMapping("/reservation")
+    @DeleteMapping("/reservations/current")
     fun cancelReservation(
         user: User
     ):ResponseWrapper<NoData>{
