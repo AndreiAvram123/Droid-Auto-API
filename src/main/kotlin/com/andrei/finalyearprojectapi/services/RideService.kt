@@ -114,7 +114,7 @@ class RideServiceImpl(
         }
     }
     private fun deleteReservation(reservation: Reservation){
-        val key = RedisKeys.userReservation.format(reservation.user.id)
+        val key = RedisKeys.userCarReservation.format(reservation.user.id)
         commands.del(key)
     }
 

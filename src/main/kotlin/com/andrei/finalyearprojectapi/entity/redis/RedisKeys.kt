@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.entity.redis
 
 object RedisKeys{
 
-     const val userReservation = "user.reservation:%d"
+     const val userCarReservation = "user.reservation:%d"
 
 
 

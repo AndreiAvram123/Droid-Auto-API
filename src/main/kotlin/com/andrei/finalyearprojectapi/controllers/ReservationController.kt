@@ -19,7 +19,7 @@ class ReservationController (
     ):Controller(){
 
 
-    @PostMapping("/reservations/current")
+    @PostMapping("/reservations")
     fun makeReservation(
         @RequestBody
         @Valid
