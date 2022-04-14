@@ -71,7 +71,7 @@ class ReservationService(
         val reservation = getUserReservation(user) ?: return false
         deleteReservationKeys(
             userID = reservation.user.id,
-            carID = reservation.carWithLocation.car.id
+            carID = reservation.car.id
         )
 
         return true
@@ -98,9 +98,12 @@ class ReservationService(
     private fun Map<String,String>.toReservation(
         remainingTime:Int
     ):Reservation? = runCatching{
+        val carWithLocation = carWithLocationRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong()) ?: throw Exception()
+
         Reservation(
             user = userRepository.findByIdOrNull(getValue(ReservationKeys.USER_ID.value).toLong())?: throw Exception(),
-            carWithLocation = carWithLocationRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong())?: throw Exception(),
+            car = carWithLocation.car,
+            carLocation = carWithLocation.location,
             remainingTime = remainingTime
         )
     }.getOrNull()
