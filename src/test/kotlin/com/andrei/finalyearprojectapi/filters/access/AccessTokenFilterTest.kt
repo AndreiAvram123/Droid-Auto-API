@@ -7,7 +7,7 @@ import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.DecodedJwt
 import com.andrei.finalyearprojectapi.utils.JWTToken
-import com.andrei.finalyearprojectapi.utils.JWTUtils
+import com.andrei.finalyearprojectapi.utils.JWTFactory
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
@@ -20,13 +20,13 @@ class AccessTokenFilterTest{
 
 
 
-    private val jwtUtils: JWTUtils = mockk(relaxed = true)
+    private val jwtFactory: JWTFactory = mockk(relaxed = true)
 
     private val userRepository: UserRepository = mockk(relaxed = true)
 
     private val  accessTokenFilter: AccessTokenFilter = AccessTokenFilter(
         userRepository = userRepository,
-        jwtUtils = jwtUtils,
+        jwtUtils = jwtFactory,
         filterDataObject = FilterDataObject()
     )
 
@@ -61,7 +61,7 @@ class AccessTokenFilterTest{
         val decodedJwt: DecodedJwt = mockk(relaxed = true)
 
         coEvery {
-            jwtUtils.decodeAccessToken(rawToken)
+            jwtFactory.decodeAccessToken(rawToken)
         } returns decodedJwt
 
         coEvery {

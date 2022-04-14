@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest
 class AccessTokenFilter(
     private val userRepository: UserRepository,
     private var filterDataObject: FilterDataObject,
-    private val jwtUtils: JWTUtils
+    private val jwtFactory: JWTFactory
 ) : SecurityFilter {
 
 
@@ -24,7 +24,7 @@ class AccessTokenFilter(
 
     override fun isFilterPassed(request:HttpServletRequest): Boolean {
         val token = request.getAccessToken() ?: return false
-        val decodedToken = jwtUtils.decodeAccessToken(token)
+        val decodedToken = jwtFactory.decodeAccessToken(token)
 
         if (decodedToken.userID != null)
         {

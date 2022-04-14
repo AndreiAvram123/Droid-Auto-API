@@ -1,18 +1,19 @@
 package com.andrei.finalyearprojectapi.controllers
 
 import com.andrei.finalyearprojectapi.configuration.ApiResponse
+import com.andrei.finalyearprojectapi.entity.LatLng
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.models.CarWithLocation
+import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
+import com.andrei.finalyearprojectapi.services.CarLocationService
 import com.andrei.finalyearprojectapi.services.CarWithLocationRepository
 import com.andrei.finalyearprojectapi.services.ReservationService
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class CarController(
@@ -20,7 +21,9 @@ class CarController(
     @Value("\${nearbyCarsDistanceMeters}")
     private val nearbyCarsDistance:Long,
     private val rideService: RideService,
-    private val reservationService: ReservationService
+    private val reservationService: ReservationService,
+    private val simpleCarRepository: SimpleCarRepository,
+    private val carLocationService:CarLocationService
 ) :Controller(){
 
 
@@ -41,6 +44,17 @@ class CarController(
             }
         )
     }
+
+
+    @GetMapping("/cars/{id}/location")
+    fun getCarLocation(
+        @PathVariable("id") carID:Long
+    ):ResponseWrapper<LatLng?>{
+         val car = simpleCarRepository.findByIdOrNull(carID) ?: return badRequest("Car does not exist");
+         val location = carLocationService.getCarLocation(car)
+         return okResponse(location)
+    }
+
 
     //todo
     //unlocking should happen only if user paid

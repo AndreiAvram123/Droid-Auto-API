@@ -63,7 +63,7 @@ class RideController(
     fun getRideByID(
         @PathVariable("id") id:Long
     ):ResponseWrapper<FinishedRide>{
-        val ride = finishedRideRepository.findTopById(id) ?: return badRequest("dfdf")
+        val ride = finishedRideRepository.findTopById(id) ?: return badRequest("No ride found with this id")
         return okResponse(ride)
     }
 

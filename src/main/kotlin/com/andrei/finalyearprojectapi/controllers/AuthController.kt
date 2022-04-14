@@ -21,7 +21,7 @@ class AuthController(
     private val userRepository: UserRepository,
     private val passwordEncoder: BCryptPasswordEncoder,
     private val emailService: EmailService,
-    private val jwtUtils: JWTUtils
+    private val jwtFactory: JWTFactory
 ) :Controller(){
 
 
@@ -68,13 +68,13 @@ class AuthController(
         newTokenRequest: NewTokenRequest
     ):ResponseWrapper<TokenResponse>{
 
-        val userID = jwtUtils.decodeRefreshToken(newTokenRequest.refreshToken).userID ?:  return badRequest(
+        val userID = jwtFactory.decodeRefreshToken(newTokenRequest.refreshToken).userID ?:  return badRequest(
             "Not a valid refresh token"
         )
         val user = userRepository.findTopById(userID) ?: return badRequest("The refresh token does not belong to a valid user")
         return okResponse(
             TokenResponse(
-                accessToken = jwtUtils.generateAccessToken(user).value
+                accessToken = jwtFactory.generateAccessToken(user).value
             )
         )
     }

@@ -8,7 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @Component
-class JWTUtils(
+class JWTFactory(
     @Value("\${accessToken.durationSeconds}")
     private val durationAccessToken:Long,
     @Value(",\${accessToken.encryptionKey}")
