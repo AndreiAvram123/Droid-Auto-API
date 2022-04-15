@@ -59,7 +59,7 @@ class RideServiceImpl(
 
         val currentTime = unixTime()
         deleteReservation(reservation)
-        updateCarStatus(reservation.car)
+        updateCarStatus(reservation.car, CarStatus.IN_USE)
         val rideMap =  mapOf(
             RideKeys.TIME_STARTED.value to currentTime.toString(),
             RideKeys.CAR_ID.value to reservation.car.id.toString(),
@@ -86,31 +86,34 @@ class RideServiceImpl(
         val ongoingRide = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
 
         val finishedRide = ongoingRide.toFinishedRide()
+         val persistedRide = finishedRideRepository.save(finishedRide)
+         user.finishedRides.add(persistedRide)
+         userRepository.save(user)
         //create charge
 
         chargeUser(finishedRide)
-        finishedRideRepository.save(finishedRide)
 
-        clearRideDataRedis(ongoingRide)
+        deleteRideFromRedis(ongoingRide)
+        updateCarStatus(finishedRide.car, CarStatus.AVAILABLE)
+
+
         lockCarCommand.execute(finishedRide.car.id)
-        return RideService.FinishRideResponse.Success(finishedRide)
+        return RideService.FinishRideResponse.Success(persistedRide)
     }
 
-    private fun clearRideDataRedis(ride: OngoingRide){
+    private fun deleteRideFromRedis(ride: OngoingRide){
         val keyUserRide = RedisKeys.userRide.format(ride.user.id)
-        val carKey = RedisKeys.car.format(ride.car.id)
-        commands.del(carKey)
         commands.del(keyUserRide)
     }
 
-    private fun updateCarStatus(car: Car) {
+    private fun updateCarStatus(car: Car, status: CarStatus) {
         val carKey = RedisKeys.car.format(car.id)
         commands.apply {
             persist(carKey)
             hset(
                 carKey,
                 mapOf(
-                    CarKeys.STATUS.value to CarStatus.IN_USE.value
+                    CarKeys.STATUS.value to status.value
                 )
             )
         }

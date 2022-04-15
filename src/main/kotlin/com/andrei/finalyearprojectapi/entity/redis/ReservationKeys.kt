@@ -16,5 +16,5 @@ enum class RideKeys(val value :String){
 }
 
 enum class CarStatus(val value :String){
-    RESERVED("reserved"), IN_USE("in_use"),
+    RESERVED("reserved"), IN_USE("in_use"),AVAILABLE("available")
 }

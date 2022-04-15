@@ -4,7 +4,7 @@ import com.andrei.finalyearprojectapi.configuration.ApiResponse
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
-import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
 import com.andrei.finalyearprojectapi.utils.hasExpireTime
 import com.andrei.finalyearprojectapi.utils.keyExists
 import io.lettuce.core.api.StatefulRedisConnection
@@ -16,8 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class ReservationService(
     redisConnection: StatefulRedisConnection<String, String>,
-    private val carWithLocationRepository: CarWithLocationRepository,
-    private val userRepository: UserRepository,
+    private val simpleCarRepository: SimpleCarRepository,
     @Value("\${reservation.timeSeconds}") private val reservationTimeSeconds:Long
 ) {
 
@@ -51,10 +50,11 @@ class ReservationService(
 
             expire(keyReservation,reservationTimeSeconds)
         }
-        val reservation = reservationMap.toReservation(
+        val reservation = Reservation(
+            user = user,
+            car = car,
             commands.ttl(keyReservation).toInt()
-        )?: return ApiResponse.Error("System error")
-
+        )
 
         return ApiResponse.Success(reservation)
     }
@@ -62,7 +62,7 @@ class ReservationService(
     fun cancelReservation(
         user:User
     ):Boolean{
-         getUserReservation(user) ?: return false
+        getUserReservation(user) ?: return false
         commands.del(RedisKeys.userCarReservation.format(user.id))
 
         return true
@@ -70,38 +70,27 @@ class ReservationService(
 
 
 
-     fun getUserReservation(
+    fun getUserReservation(
         user:User
     ):Reservation?{
         //check if user reservation exists
         val keyUserReservation = RedisKeys.userCarReservation.format(user.id)
+
         if(commands.keyExists(keyUserReservation)){
             val reservationMap:Map<String,String> = commands.hgetall(keyUserReservation)
             if(commands.hasExpireTime(keyUserReservation)){
-                 //pre reservation
-                  return reservationMap.toReservation(
-                      commands.ttl(keyUserReservation).toInt()
-                  )
+                //pre reservation
+                val carID = reservationMap[ReservationKeys.CAR_ID.value]?.toLong() ?: return null
+                val car = simpleCarRepository.findByIdOrNull(carID) ?: return null
+                return   Reservation(
+                    user = user,
+                    car = car,
+                    commands.ttl(keyUserReservation).toInt()
+                )
             }
         }
-         return null
+        return null
     }
-    private fun Map<String,String>.toReservation(
-        remainingTime:Int
-    ):Reservation? = runCatching{
-        //todo
-        //a reservation should not have the location
-        //that should be obtained dynamically
-        val carWithLocation = carWithLocationRepository.findByIdOrNull(getValue(ReservationKeys.CAR_ID.value).toLong()) ?: throw Exception()
-
-        Reservation(
-            user = userRepository.findByIdOrNull(getValue(ReservationKeys.USER_ID.value).toLong())?: throw Exception(),
-            car = carWithLocation.car,
-            carLocation = carWithLocation.location,
-            remainingTime = remainingTime
-        )
-    }.getOrNull()
-
 
 
 

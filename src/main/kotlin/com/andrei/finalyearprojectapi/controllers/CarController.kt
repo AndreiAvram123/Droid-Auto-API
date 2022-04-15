@@ -33,6 +33,8 @@ class CarController(
         @RequestParam longitude:Double
     ):ResponseWrapper<List<CarWithLocation>>{
 
+        //todo
+        //make sure these are not reserved
         return okResponse(
             carWithLocationRepository.findAll().filter { car->
                 LocationUtils.distance(

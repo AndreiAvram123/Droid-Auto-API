@@ -12,9 +12,11 @@ data class OngoingRide(
     val startTime:Long
     )
 
-fun OngoingRide.elapsedSeconds():Long = unixTime() - this.startTime
+fun OngoingRide.elapsedMinutes():Long = (unixTime() - startTime)/60
 
-fun OngoingRide.totalCharge():Long  = elapsedSeconds() * car.pricePerMinute
+
+
+fun OngoingRide.totalCharge():Long  = elapsedMinutes() * car.pricePerMinute
 
 fun OngoingRide.toFinishedRide():FinishedRide = FinishedRide(
     id = 0,
