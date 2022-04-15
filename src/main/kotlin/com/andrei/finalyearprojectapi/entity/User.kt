@@ -28,7 +28,7 @@ class User(
     @JsonIgnore
     val ipAddresses:MutableList<IpAddress> = mutableListOf(),
 
-    @OneToMany(cascade = [CascadeType.PERSIST])
+    @OneToMany
     @JsonIgnore
     val finishedRides:MutableList<FinishedRide> = mutableListOf(),
 

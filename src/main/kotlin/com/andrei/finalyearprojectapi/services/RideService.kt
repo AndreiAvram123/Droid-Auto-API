@@ -85,7 +85,8 @@ class RideServiceImpl(
     override fun finishRide(user: User):  RideService.FinishRideResponse {
         val ongoingRide = getOngoingRide(user) ?: return RideService.FinishRideResponse.NoRideFound
 
-        val finishedRide = ongoingRide.toFinishedRide()
+         val finishedRide = ongoingRide.toFinishedRide()
+
          val persistedRide = finishedRideRepository.save(finishedRide)
          user.finishedRides.add(persistedRide)
          userRepository.save(user)
