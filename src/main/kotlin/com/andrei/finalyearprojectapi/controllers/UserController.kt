@@ -15,6 +15,8 @@ class UserController : BaseRestController() {
         user: User
     ):ApiResponse<User> = okResponse(user)
 
+
+    
     override fun registerController() {
         Controllers.add(this::class)
     }
