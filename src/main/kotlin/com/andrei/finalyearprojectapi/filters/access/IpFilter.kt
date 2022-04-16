@@ -3,7 +3,7 @@ package com.andrei.finalyearprojectapi.filters.access
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.ApiResponse
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.newLoginDevice
 import com.example.demo.configuration.getForwardedHeader
@@ -33,7 +33,7 @@ class IpFilter(
         return false
     }
 
-    override fun generateErrorResponse(): ResponseWrapper<String> {
+    override fun generateErrorResponse(): ApiResponse<String> {
           return newLoginDevice()
     }
 }

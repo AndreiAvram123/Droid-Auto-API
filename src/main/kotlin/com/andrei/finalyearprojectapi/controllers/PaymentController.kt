@@ -5,7 +5,7 @@ import com.andrei.finalyearprojectapi.request.auth.PaymentRequest
 import com.andrei.finalyearprojectapi.response.PaymentResponse
 import com.andrei.finalyearprojectapi.services.PaymentService
 import com.andrei.finalyearprojectapi.utils.Controllers
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.ApiResponse
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class PaymentController(
     private val paymentService: PaymentService
-) :Controller(){
+) :BaseRestController(){
 
     private val unlockFee = 200L
     @PostMapping("/payment/unlock_fee")
     fun createPayment(
         user:User
-    ):ResponseWrapper<PaymentResponse>{
+    ):ApiResponse<PaymentResponse>{
         val paymentRequest = PaymentRequest(
             amount = unlockFee,
             user = user

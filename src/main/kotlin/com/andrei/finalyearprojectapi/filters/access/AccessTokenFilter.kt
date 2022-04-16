@@ -36,7 +36,7 @@ class AccessTokenFilter(
         }
     }
 
-    override fun generateErrorResponse(): ResponseWrapper<String>  = notAuthenticated()
+    override fun generateErrorResponse(): ApiResponse<String>  = notAuthenticated()
 
 
 }

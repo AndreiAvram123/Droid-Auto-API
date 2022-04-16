@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.services
 
 import com.andrei.finalyearprojectapi.Mqqt.commands.LockCarCommand
 import com.andrei.finalyearprojectapi.Mqqt.commands.UnlockCarCommand
-import com.andrei.finalyearprojectapi.configuration.ApiResponse
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 
 interface RideService{
     fun getOngoingRide(user:User): OngoingRide?
-    fun startRide(reservation: Reservation):ApiResponse<OngoingRide>
+    fun startRide(reservation: Reservation):Response<OngoingRide>
     fun finishRide(user:User):FinishRideResponse
 
     sealed class FinishRideResponse{
@@ -55,7 +55,7 @@ class RideServiceImpl(
     }
 
 
-    override fun startRide(reservation: Reservation): ApiResponse<OngoingRide> {
+    override fun startRide(reservation: Reservation): Response<OngoingRide> {
 
         val currentTime = unixTime()
         deleteReservation(reservation)
@@ -69,9 +69,9 @@ class RideServiceImpl(
             RedisKeys.userRide.format(reservation.user.id),
             rideMap
         )
-        val ride = rideMap.toRide()?: return ApiResponse.Error("Conversion error");
+        val ride = rideMap.toRide()?: return Response.Error("Conversion error");
         unlockCarCommand.execute(reservation.car.id)
-        return ApiResponse.Success(ride)
+        return Response.Success(ride)
     }
 
     private fun chargeUser(finishedRide: FinishedRide){

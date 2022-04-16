@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
-abstract class Controller {
+abstract class BaseRestController {
     init {
         registerController()
     }

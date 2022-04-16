@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.services
 
-import com.andrei.finalyearprojectapi.configuration.ApiResponse
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.*
@@ -28,7 +28,7 @@ class ReservationService(
     fun makeReservation(
         car:Car,
         user:User
-    ): ApiResponse<Reservation> {
+    ): Response<Reservation> {
         val keyReservation = RedisKeys.userCarReservation.format(user.id)
         val keyCar = RedisKeys.car.format(car.id)
 
@@ -56,7 +56,7 @@ class ReservationService(
             commands.ttl(keyReservation).toInt()
         )
 
-        return ApiResponse.Success(reservation)
+        return Response.Success(reservation)
     }
 
     fun cancelReservation(

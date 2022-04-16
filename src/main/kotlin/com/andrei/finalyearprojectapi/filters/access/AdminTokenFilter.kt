@@ -4,7 +4,7 @@ import com.andrei.finalyearprojectapi.configuration.annotations.AdminTokenRequir
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.filters.FilterDataObject
 import com.andrei.finalyearprojectapi.filters.SecurityFilter
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.ApiResponse
 import com.andrei.finalyearprojectapi.utils.endpointHasAnnotation
 import com.andrei.finalyearprojectapi.utils.notAuthorized
 import org.springframework.stereotype.Component
@@ -28,6 +28,6 @@ class AdminTokenFilterImpl(
         return  useFilterDataObject.getUserNotNull().role == UserRole.ADMIN
     }
 
-    override fun generateErrorResponse(): ResponseWrapper<String>  = notAuthorized()
+    override fun generateErrorResponse(): ApiResponse<String>  = notAuthorized()
 
 }

@@ -22,7 +22,7 @@ class AuthController(
     private val passwordEncoder: BCryptPasswordEncoder,
     private val emailService: EmailService,
     private val jwtFactory: JWTFactory
-) :Controller(){
+) :BaseRestController(){
 
 
     @PostMapping("/register")
@@ -30,7 +30,7 @@ class AuthController(
     @Throws(RegisterException::class)
     fun register(@RequestBody
                  @Valid
-                 userRequest: RegisterUserRequest): ResponseWrapper<User> {
+                 userRequest: RegisterUserRequest): ApiResponse<User> {
         val user = userRequest.toUser(passwordEncoder)
         if(isNewUserValid(user)) {
             userRepository.save(user)
@@ -44,7 +44,7 @@ class AuthController(
 
     @NoAuthenticationRequired
     @GetMapping("/email/valid")
-    fun checkIfEmailIsInUse(@RequestParam email:String) : ResponseWrapper<NoData>{
+    fun checkIfEmailIsInUse(@RequestParam email:String) : ApiResponse<NoData>{
          userRepository.findTopByEmail(email) ?: return nothing()
          return badRequest(errorEmailAlreadyUsed)
     }
@@ -53,7 +53,7 @@ class AuthController(
     @PostMapping("/email/verification")
     fun sendVerificationEmail(
         user:User
-    ):ResponseWrapper<NoData>{
+    ):ApiResponse<NoData>{
         emailService.sendVerificationEmail(
            to =  Email(user.email)
         )
@@ -66,7 +66,7 @@ class AuthController(
         @RequestBody
         @Valid
         newTokenRequest: NewTokenRequest
-    ):ResponseWrapper<TokenResponse>{
+    ):ApiResponse<TokenResponse>{
 
         val userID = jwtFactory.decodeRefreshToken(newTokenRequest.refreshToken).userID ?:  return badRequest(
             "Not a valid refresh token"

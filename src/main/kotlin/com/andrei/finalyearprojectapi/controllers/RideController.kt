@@ -6,7 +6,7 @@ import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.Controllers
-import com.andrei.finalyearprojectapi.utils.ResponseWrapper
+import com.andrei.finalyearprojectapi.utils.ApiResponse
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -18,20 +18,20 @@ import org.springframework.web.bind.annotation.RestController
 class RideController(
     private val rideService: RideService,
     private val finishedRideRepository: FinishedRideRepository
-) :Controller(){
+) :BaseRestController(){
 
 
     @GetMapping("/rides/ongoing")
     fun getOngoingRide(
         user:User
-    ): ResponseWrapper<OngoingRide?>{
+    ): ApiResponse<OngoingRide?>{
         return okResponse(rideService.getOngoingRide(user))
     }
 
     @DeleteMapping("/rides/ongoing")
     fun finishRide(
         user:User
-    ):ResponseWrapper<FinishedRide>{
+    ):ApiResponse<FinishedRide>{
         when(val response = rideService.finishRide(user)){
             is RideService.FinishRideResponse.Success -> {
                 return okResponse(
@@ -50,19 +50,19 @@ class RideController(
     @GetMapping("/rides/last")
     fun getLastFinishedRide(
        user:User
-    ):ResponseWrapper<FinishedRide?> = okResponse(user.finishedRides.lastOrNull())
+    ):ApiResponse<FinishedRide?> = okResponse(user.finishedRides.lastOrNull())
 
 
     @GetMapping("/rides")
     fun getFinishedRides(
         user:User
-    ):ResponseWrapper<List<FinishedRide>> = okResponse(user.finishedRides)
+    ):ApiResponse<List<FinishedRide>> = okResponse(user.finishedRides)
 
 
     @GetMapping("/rides/{id}")
     fun getRideByID(
         @PathVariable("id") id:Long
-    ):ResponseWrapper<FinishedRide>{
+    ):ApiResponse<FinishedRide>{
         val ride = finishedRideRepository.findTopById(id) ?: return badRequest("No ride found with this id")
         return okResponse(ride)
     }

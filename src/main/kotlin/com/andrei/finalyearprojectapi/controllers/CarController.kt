@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.configuration.ApiResponse
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.LatLng
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
@@ -24,14 +24,14 @@ class CarController(
     private val reservationService: ReservationService,
     private val simpleCarRepository: SimpleCarRepository,
     private val carLocationService:CarLocationService
-) :Controller(){
+) :BaseRestController(){
 
 
     @GetMapping("/nearby")
     fun getNearbyCars(
         @RequestParam latitude:Double,
         @RequestParam longitude:Double
-    ):ResponseWrapper<List<CarWithLocation>>{
+    ):ApiResponse<List<CarWithLocation>>{
 
         //todo
         //make sure these are not reserved
@@ -51,7 +51,7 @@ class CarController(
     @GetMapping("/cars/{id}/location")
     fun getCarLocation(
         @PathVariable("id") carID:Long
-    ):ResponseWrapper<LatLng?>{
+    ):ApiResponse<LatLng?>{
          val car = simpleCarRepository.findByIdOrNull(carID) ?: return badRequest("Car does not exist");
          val location = carLocationService.getCarLocation(car)
          return okResponse(location)
@@ -64,14 +64,14 @@ class CarController(
     @PostMapping("/car/unlock")
     fun unlockCar(
         user:User
-    ):ResponseWrapper<OngoingRide>{
+    ):ApiResponse<OngoingRide>{
         val reservation = reservationService.getUserReservation(user) ?: return badRequest("Cannot unlock car")
         val response =  rideService.startRide(
             reservation
         )
         return when(response){
-            is ApiResponse.Error -> badRequest("Cannot unlock car")
-            is ApiResponse.Success -> okResponse(response.data)
+            is Response.Error -> badRequest("Cannot unlock car")
+            is Response.Success -> okResponse(response.data)
         }
     }
 

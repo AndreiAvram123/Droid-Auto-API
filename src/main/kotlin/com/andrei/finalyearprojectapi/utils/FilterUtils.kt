@@ -1,6 +1,6 @@
 package com.andrei.finalyearprojectapi.utils
 
-import com.andrei.finalyearprojectapi.controllers.Controller
+import com.andrei.finalyearprojectapi.controllers.BaseRestController
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 import kotlin.reflect.KAnnotatedElement
@@ -12,7 +12,7 @@ object Controllers{
     private val  controllers:MutableList<KClass<out Any>> = mutableListOf()
 
     fun add(controller: KClass<out Any>){
-        if(controller.isSubclassOf(Controller::class)){
+        if(controller.isSubclassOf(BaseRestController::class)){
             controllers.add(controller)
         }
     }

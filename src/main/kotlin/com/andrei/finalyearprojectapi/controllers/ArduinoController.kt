@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ArduinoController (
      private val messageGateway: MqqtMessageGateway
-): Controller() {
+): BaseRestController() {
 
 
     final override fun registerController() {
