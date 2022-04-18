@@ -1,14 +1,12 @@
 package com.andrei.finalyearprojectapi.controllers
 
-import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.LatLng
 import com.andrei.finalyearprojectapi.entity.User
-import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.models.CarWithLocation
 import com.andrei.finalyearprojectapi.repositories.SimpleCarRepository
+import com.andrei.finalyearprojectapi.services.CarHardwareController
 import com.andrei.finalyearprojectapi.services.CarLocationService
 import com.andrei.finalyearprojectapi.services.CarWithLocationRepository
-import com.andrei.finalyearprojectapi.services.ReservationService
 import com.andrei.finalyearprojectapi.services.RideService
 import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.beans.factory.annotation.Value
@@ -21,9 +19,9 @@ class CarController(
     @Value("\${nearbyCarsDistanceMeters}")
     private val nearbyCarsDistance:Long,
     private val rideService: RideService,
-    private val reservationService: ReservationService,
     private val simpleCarRepository: SimpleCarRepository,
-    private val carLocationService:CarLocationService
+    private val carLocationService:CarLocationService,
+    private val carHardwareController: CarHardwareController
 ) :BaseRestController(){
 
 
@@ -58,21 +56,24 @@ class CarController(
     }
 
 
-    //todo
-    //unlocking should happen only if user paid
 
-    @PostMapping("/car/unlock")
+    @PostMapping("/rides/current/car/unlock")
     fun unlockCar(
         user:User
-    ):ApiResponse<OngoingRide>{
-        val reservation = reservationService.getUserReservation(user) ?: return badRequest("Cannot unlock car")
-        val response =  rideService.startRide(
-            reservation
-        )
-        return when(response){
-            is Response.Error -> badRequest("Cannot unlock car")
-            is Response.Success -> okResponse(response.data)
-        }
+    ):ApiResponse<NoData>{
+       val ongoingRide = rideService.getOngoingRide(user) ?: return badRequest("Cannot perform operation, no car to unlock for current ride")
+        carHardwareController.unlockCar(ongoingRide.car)
+        return nothing()
+
+    }
+
+    @PostMapping("/rides/current/car/lock")
+    fun lockCar(
+        user:User
+    ):ApiResponse<NoData>{
+        val ongoingRide = rideService.getOngoingRide(user) ?: return badRequest("Cannot perform operation, no car to unlock for current ride")
+        carHardwareController.lockCar(ongoingRide.car)
+        return nothing()
     }
 
     final override fun registerController() {

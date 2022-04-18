@@ -1,7 +1,5 @@
 package com.andrei.finalyearprojectapi.services
 
-import com.andrei.finalyearprojectapi.Mqqt.commands.LockCarCommand
-import com.andrei.finalyearprojectapi.Mqqt.commands.UnlockCarCommand
 import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.Car
 import com.andrei.finalyearprojectapi.entity.FinishedRide
@@ -35,8 +33,7 @@ class RideServiceImpl(
     private val simpleCarRepository: SimpleCarRepository,
     private val finishedRideRepository: FinishedRideRepository,
     private val paymentService: PaymentService,
-    private val unlockCarCommand: UnlockCarCommand,
-    private val lockCarCommand: LockCarCommand
+    private val carHardwareController: CarHardwareController
 ) :RideService {
 
 
@@ -70,7 +67,7 @@ class RideServiceImpl(
             rideMap
         )
         val ride = rideMap.toRide()?: return Response.Error("Conversion error");
-        unlockCarCommand.execute(reservation.car.id)
+        carHardwareController.unlockCar(reservation.car)
         return Response.Success(ride)
     }
 
@@ -98,7 +95,7 @@ class RideServiceImpl(
         updateCarStatus(finishedRide.car, CarStatus.AVAILABLE)
 
 
-        lockCarCommand.execute(finishedRide.car.id)
+        carHardwareController.lockCar(finishedRide.car)
         return RideService.FinishRideResponse.Success(persistedRide)
     }
 

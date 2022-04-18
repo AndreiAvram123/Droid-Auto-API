@@ -1,23 +1,23 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.configuration.Response
 import com.andrei.finalyearprojectapi.entity.FinishedRide
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.redis.OngoingRide
 import com.andrei.finalyearprojectapi.repositories.FinishedRideRepository
+import com.andrei.finalyearprojectapi.services.ReservationService
 import com.andrei.finalyearprojectapi.services.RideService
-import com.andrei.finalyearprojectapi.utils.Controllers
 import com.andrei.finalyearprojectapi.utils.ApiResponse
+import com.andrei.finalyearprojectapi.utils.Controllers
 import com.andrei.finalyearprojectapi.utils.badRequest
 import com.andrei.finalyearprojectapi.utils.okResponse
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class RideController(
     private val rideService: RideService,
-    private val finishedRideRepository: FinishedRideRepository
+    private val finishedRideRepository: FinishedRideRepository,
+    private val reservationService: ReservationService
 ) :BaseRestController(){
 
 
@@ -27,6 +27,22 @@ class RideController(
     ): ApiResponse<OngoingRide?>{
         return okResponse(rideService.getOngoingRide(user))
     }
+
+    //todo
+    //check if user paid
+    @PostMapping("/rides")
+   fun startRide(
+        user: User
+   ):ApiResponse<OngoingRide>{
+        val reservation = reservationService.getUserReservation(user) ?: return badRequest("Cannot start ride , no reservation found")
+        val response =  rideService.startRide(
+            reservation
+        )
+        return when(response){
+            is Response.Error -> badRequest(response.error)
+            is Response.Success -> okResponse(response.data)
+        }
+   }
 
     @DeleteMapping("/rides/ongoing")
     fun finishRide(
