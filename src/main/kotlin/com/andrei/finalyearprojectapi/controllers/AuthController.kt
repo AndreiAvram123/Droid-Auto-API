@@ -46,7 +46,7 @@ class AuthController(
     @GetMapping("/email/valid")
     fun checkIfEmailIsInUse(@RequestParam email:String) : ApiResponse<NoData>{
          userRepository.findTopByEmail(email) ?: return nothing()
-         return badRequest(errorEmailAlreadyUsed)
+         return notAcceptable(errorEmailAlreadyUsed)
     }
 
 
