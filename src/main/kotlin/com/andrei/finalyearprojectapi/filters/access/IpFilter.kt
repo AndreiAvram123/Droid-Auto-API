@@ -25,7 +25,7 @@ class IpFilter(
     override fun isFilterPassed(request: HttpServletRequest): Boolean {
         //todo
         //might not work
-        val allowedIps = filterDataObject.user?.ipAddresses ?: return false
+        val allowedIps = filterDataObject.getUserNotNull().ipAddresses ?: return false
         val requestIP = request.getForwardedHeader() ?: request.remoteAddr
         allowedIps.find { it.value == requestIP }?.let {
             return true

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest
 class AccessTokenFilter(
     private val userRepository: UserRepository,
     private var filterDataObject: FilterDataObject,
-    private val jwtFactory: JWTFactory
+    private val jwtUtils: JWTUtils
 ) : SecurityFilter {
 
 
@@ -24,16 +24,11 @@ class AccessTokenFilter(
 
     override fun isFilterPassed(request:HttpServletRequest): Boolean {
         val token = request.getAccessToken() ?: return false
-        val decodedToken = jwtFactory.decodeAccessToken(token)
+        val tokenPayload = jwtUtils.parseAccessTokenPayload(token) ?: return false
 
-        if (decodedToken.userID != null)
-        {
-             val user:User = userRepository.findTopById(decodedToken.userID) ?: return false
-              filterDataObject.user = user
-             return true
-        }else{
-            return false
-        }
+        val user:User = userRepository.findTopById(tokenPayload.userID) ?: return false
+        filterDataObject.setUser(user)
+        return true
     }
 
     override fun generateErrorResponse(): ApiResponse<String>  = notAuthenticated()

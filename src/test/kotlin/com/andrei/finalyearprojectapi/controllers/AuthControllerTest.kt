@@ -2,8 +2,7 @@ package com.andrei.finalyearprojectapi.controllers
 
 
 import com.andrei.finalyearprojectapi.configuration.Response
-import com.andrei.finalyearprojectapi.configuration.TestDetails
-import com.andrei.finalyearprojectapi.entity.User
+import com.andrei.finalyearprojectapi.configuration.TestData
 import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.request.auth.LoginRequest
@@ -41,9 +40,12 @@ class AuthControllerTest{
     private lateinit var bCryptPasswordEncoder: BCryptPasswordEncoder
 
     @BeforeAll
-    fun setUpBeforeAll(){
-        val user = User(password = bCryptPasswordEncoder.encode(TestDetails.testPassword))
-        userRepository.save(user)
+    fun setUpBeforeAll() {
+        TestData.getUser(
+            bCryptPasswordEncoder.encode(TestData.password)
+        ).also {
+            userRepository.save(it)
+        }
     }
 
 
@@ -73,7 +75,7 @@ class AuthControllerTest{
     @Test
     fun `Given valid request json but the user details invalid the response code should be 401 `(){
         val loginDetails = LoginRequest(
-            username = "andrei",
+            email = "andrei",
             password = "andrei1223"
         )
 
@@ -91,8 +93,8 @@ class AuthControllerTest{
     @Test
     fun `Given valid request json with valid user credentials the response should contain login details `(){
         val loginDetails = LoginRequest(
-            username = TestDetails.testUsername,
-            password = TestDetails.testPassword
+            email = TestData.email,
+            password = TestData.password
         )
 
         val loginRequest = MockMvcRequestBuilders.post("/login").apply {

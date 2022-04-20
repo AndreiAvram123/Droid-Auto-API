@@ -4,7 +4,11 @@ import com.andrei.finalyearprojectapi.entity.User
 
 
 open class FilterDataObject {
-    var user: User? = null
+    private var user: User? = null
+
+   fun setUser(user:User){
+       this.user = user
+   }
 
     fun getUserNotNull(): User {
         val temp = user

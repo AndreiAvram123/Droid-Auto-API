@@ -2,7 +2,7 @@ package com.andrei.finalyearprojectapi.configuration.beans
 
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.utils.JWTFactory
+import com.andrei.finalyearprojectapi.utils.JWTUtils
 import com.andrei.finalyearprojectapi.utils.getAccessToken
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest
 @Component
 class UserResolver(
     private val userRepository: UserRepository,
-    private val jwtFactory: JWTFactory
+    private val jwtUtils: JWTUtils
 ) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
@@ -32,9 +32,9 @@ class UserResolver(
         val nativeRequest = webRequest.getNativeRequest(HttpServletRequest::class.java)
         val accessToken = nativeRequest?.getAccessToken() ?: throw Exception()
 
-        val decodedToken = jwtFactory.decodeAccessToken(accessToken)
+        val decodedToken = jwtUtils.parseAccessTokenPayload(accessToken)
 
-        check(decodedToken.userID != null) { "Security issue with the filter" }
+        check(decodedToken != null) { "Security issue with the filter" }
 
         return userRepository.findTopById(decodedToken.userID) ?: throw Exception()
     }

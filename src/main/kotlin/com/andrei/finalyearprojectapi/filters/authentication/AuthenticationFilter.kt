@@ -4,8 +4,9 @@ package com.andrei.finalyearprojectapi.filters.authentication
 import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.exceptions.InvalidJsonException
 import com.andrei.finalyearprojectapi.repositories.UserRepository
+import com.andrei.finalyearprojectapi.request.auth.LoginRequest
 import com.andrei.finalyearprojectapi.response.LoginResponse
-import com.andrei.finalyearprojectapi.utils.JWTFactory
+import com.andrei.finalyearprojectapi.utils.JWTUtils
 import com.andrei.finalyearprojectapi.utils.okResponse
 import com.andrei.finalyearprojectapi.utils.writeJsonResponse
 import com.google.gson.Gson
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletResponse
 class AuthenticationFilter(
     authenticationManager: AuthenticationManager,
     private val userRepository: UserRepository,
-    private val jwtFactory: JWTFactory
+    private val jwtUtils: JWTUtils
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
 
@@ -34,15 +35,15 @@ class AuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication? {
         val requestBody = request.reader.lines().collect(Collectors.joining())
         val gson = Gson()
-        val user =  try {
-            gson.fromJson(requestBody, User::class.java)!!
+        val loginRequest =  try {
+            gson.fromJson(requestBody, LoginRequest::class.java)!!
         }catch (e:Exception){
             throw InvalidJsonException()
         }
         return authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                user.email,
-                user.password,
+                loginRequest.email,
+                loginRequest.password,
                 emptyList()
             )
         )
@@ -66,8 +67,8 @@ class AuthenticationFilter(
             isEmailVerified = user.emailVerified
         )
         loginResponse.apply {
-            accessToken =   jwtFactory.generateAccessToken(user).value
-            refreshToken =   jwtFactory.generateRefreshToken(user).value
+            accessToken =   jwtUtils.generateAccessToken(user)
+            refreshToken =   jwtUtils.generateRefreshToken(user)
         }
         return  loginResponse;
 

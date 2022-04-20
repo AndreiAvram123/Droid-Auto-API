@@ -1,9 +1,9 @@
 package com.andrei.finalyearprojectapi.filters.access
 
-import com.andrei.finalyearprojectapi.entity.User
 import com.andrei.finalyearprojectapi.entity.enums.UserRole
 import com.andrei.finalyearprojectapi.filters.FilterDataObject
-import org.junit.jupiter.api.AfterEach
+import io.mockk.coEvery
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 
@@ -11,42 +11,37 @@ class AdminTokenFilterTest{
 
     var request = MockHttpServletRequest()
 
-    private val userDataObject:FilterDataObject = FilterDataObject()
+    private val filterDataObject:FilterDataObject = mockk(relaxed = true)
 
     private val adminTokenFilter: AdminTokenFilter = AdminTokenFilterImpl(
-        useFilterDataObject = userDataObject
+        useFilterDataObject = filterDataObject
     )
 
 
 
-
-    @AfterEach
-    fun tearDown(){
-        userDataObject.apply {
-            user = null
-        }
-    }
-
     @Test
     fun `Given user role token the filter should not pass`(){
-         userDataObject.apply {
-             user = User(role = UserRole.USER)
-         }
+        coEvery {
+            filterDataObject.getUserNotNull().role
+        }returns UserRole.ADMIN
+
         assert(!adminTokenFilter.isFilterPassed(request))
     }
     @Test
     fun `Given token with user role  the filter should not pass`(){
-        userDataObject.apply {
-            user = User(role = UserRole.UNKNOWN)
-        }
+        coEvery {
+            filterDataObject.getUserNotNull().role
+        }returns UserRole.UNKNOWN
+
         assert(!adminTokenFilter.isFilterPassed(request))
     }
 
     @Test
     fun `Given admin role token the filter should  pass`(){
-        userDataObject.apply {
-            user = User(role = UserRole.ADMIN)
-        }
+        coEvery {
+            filterDataObject.getUserNotNull().role
+        }returns UserRole.ADMIN
+
         assert(adminTokenFilter.isFilterPassed(request))
     }
 }
