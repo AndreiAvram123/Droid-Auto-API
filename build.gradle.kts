@@ -34,7 +34,7 @@ repositories {
 
 dependencies {
 
-    val mockkVersion = "1.12.3"
+    val mockkVersion = "1.12.2"
     implementation ("com.hivemq:hivemq-mqtt-client:1.3.0")
 
 

@@ -36,6 +36,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler(){
      fun <T> handleConflict(exception: Exception, request:HttpServletRequest, response: HttpServletResponse){
          when(exception){
              is RegisterException ->{
+
                  response.writeJsonResponse<String>(
                      badRequest(
                          exception.registrationMessage

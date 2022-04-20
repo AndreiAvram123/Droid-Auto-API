@@ -27,6 +27,8 @@ fun <T> errorResponse(code:HttpStatus, error:String):ApiResponse<T> =
 
 fun <T> okResponse(data: T ) : ApiResponse<T> = ResponseEntity.ok(Response.Success(data))
 
+fun <T> createdResponse(data: T):ApiResponse<T> = ResponseEntity.status(HttpStatus.CREATED).body(Response.Success(data))
+
 fun nothing():ApiResponse<NoData> = ResponseEntity.ok(Response.Success(null))
 
 

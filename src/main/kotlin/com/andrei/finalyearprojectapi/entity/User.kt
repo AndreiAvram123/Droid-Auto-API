@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Entity(name = "users")
+@Table(
+    uniqueConstraints = [UniqueConstraint(name = "firstNameAndLastName", columnNames = arrayOf("firstName","lastName") )]
+)
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -15,7 +18,10 @@ class User(
     val firstName:String,
     @Column(name = "lastName", nullable = false)
     val lastName:String,
-    @Column(nullable = false)
+    @Column(
+        nullable = false,
+        unique = true
+    )
     val email:String,
     @Column(nullable = false)
     @JsonIgnore

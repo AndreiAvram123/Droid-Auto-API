@@ -32,10 +32,8 @@ class UserResolver(
         val nativeRequest = webRequest.getNativeRequest(HttpServletRequest::class.java)
         val accessToken = nativeRequest?.getAccessToken() ?: throw Exception()
 
-        val decodedToken = jwtUtils.parseAccessTokenPayload(accessToken)
+        val parseResult = jwtUtils.parseAccessTokenPayload(accessToken)
 
-        check(decodedToken != null) { "Security issue with the filter" }
-
-        return userRepository.findTopById(decodedToken.userID) ?: throw Exception()
+        return userRepository.findTopById(parseResult.getOrThrow().userID) ?: throw Exception()
     }
 }

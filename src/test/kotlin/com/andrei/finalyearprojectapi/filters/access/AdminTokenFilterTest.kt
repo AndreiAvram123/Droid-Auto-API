@@ -23,7 +23,7 @@ class AdminTokenFilterTest{
     fun `Given user role token the filter should not pass`(){
         coEvery {
             filterDataObject.getUserNotNull().role
-        }returns UserRole.ADMIN
+        }returns UserRole.USER
 
         assert(!adminTokenFilter.isFilterPassed(request))
     }

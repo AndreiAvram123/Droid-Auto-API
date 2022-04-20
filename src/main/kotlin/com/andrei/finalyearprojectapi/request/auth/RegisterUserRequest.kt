@@ -5,16 +5,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import javax.validation.constraints.NotBlank
 
 data class RegisterUserRequest(
-       @field:NotBlank(message = "First name should not be blank")
-       val firstName:String = "",
-        @field:NotBlank(message = "Last name should not be blank")
-        val lastName:String = "",
-       @field:NotBlank(message = "Email should not be blank")
-        val email :String ="",
-       @field:NotBlank(message = "Email should not be blank")
-       val password:String = "",
-
+       @field:NotBlank(message = RegisterUserRequestErrors.blankFirstName)
+       val firstName:String ,
+        @field:NotBlank(message = RegisterUserRequestErrors.blankLastName)
+        val lastName:String ,
+       @field:NotBlank(message = RegisterUserRequestErrors.blankEmail)
+        val email :String,
+       @field:NotBlank(message = RegisterUserRequestErrors.blankPassword)
+       val password:String
 )
+
+object RegisterUserRequestErrors{
+    const val blankEmail =  "First name should not be blank"
+    const val blankFirstName =  "Last name should not be blank"
+    const val blankLastName =  "Email should not be blank"
+    const val blankPassword =  "password should not be blank"
+}
 
 fun RegisterUserRequest.toUser(passwordEncoder: BCryptPasswordEncoder) = User(
                 id = 1,
@@ -23,3 +29,4 @@ fun RegisterUserRequest.toUser(passwordEncoder: BCryptPasswordEncoder) = User(
                 email =  email,
                 password = passwordEncoder.encode(password)
 )
+

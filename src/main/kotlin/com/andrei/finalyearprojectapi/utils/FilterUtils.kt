@@ -70,5 +70,5 @@ fun String.endpointPathRegex():Regex = replace("\\{.+}".toRegex(),"[0-9]+").toRe
 
 inline fun <reified T:Annotation> HttpServletRequest.endpointHasAnnotation():Boolean  = findEndpointsWithAnnotation<T>().find {
             route->
-        servletPath.matches(route.path.endpointPathRegex()) && method == route.requestMethod.name
+        requestURI.matches(route.path.endpointPathRegex()) && method == route.requestMethod.name
     } != null

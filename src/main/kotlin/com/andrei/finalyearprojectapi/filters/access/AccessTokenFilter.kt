@@ -24,7 +24,7 @@ class AccessTokenFilter(
 
     override fun isFilterPassed(request:HttpServletRequest): Boolean {
         val token = request.getAccessToken() ?: return false
-        val tokenPayload = jwtUtils.parseAccessTokenPayload(token) ?: return false
+        val tokenPayload = jwtUtils.parseAccessTokenPayload(token).getOrNull() ?: return false
 
         val user:User = userRepository.findTopById(tokenPayload.userID) ?: return false
         filterDataObject.setUser(user)

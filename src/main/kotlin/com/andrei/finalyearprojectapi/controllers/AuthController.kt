@@ -27,11 +27,13 @@ class AuthController(
 
     @PostMapping("/register")
     @NoAuthenticationRequired
-    @Throws(RegisterException::class)
     fun register(@RequestBody
                  @Valid
-                 userRequest: RegisterUserRequest): ApiResponse<User> {
+                 userRequest: RegisterUserRequest
+    ): ApiResponse<User> {
+
         val user = userRequest.toUser(passwordEncoder)
+
         if(isNewUserValid(user)) {
             userRepository.save(user)
         }
@@ -39,7 +41,7 @@ class AuthController(
         emailService.sendVerificationEmail(
             to = Email(userRequest.email)
         )
-        return okResponse(user)
+        return createdResponse(user)
     }
 
     @NoAuthenticationRequired
@@ -68,10 +70,11 @@ class AuthController(
         newTokenRequest: NewTokenRequest
     ):ApiResponse<TokenResponse>{
 
-        val userID = jwtUtils.parseRefreshTokenPayload(newTokenRequest.refreshToken)?.userID ?:  return badRequest(
-            "Not a valid refresh token"
+        val payload = jwtUtils.parseRefreshTokenPayload(newTokenRequest.refreshToken).getOrNull() ?: return badRequest(
+        "Not a valid refresh token"
         )
-        val user = userRepository.findTopById(userID) ?: return badRequest("The refresh token does not belong to a valid user")
+
+        val user = userRepository.findTopById(payload.userID) ?: return badRequest("The refresh token does not belong to a valid user")
         return okResponse(
             TokenResponse(
                 accessToken = jwtUtils.generateAccessToken(user)
