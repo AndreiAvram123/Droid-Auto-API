@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 @Entity(name = "users")
-@Table(
-    uniqueConstraints = [UniqueConstraint(name = "firstNameAndLastName", columnNames = arrayOf("firstName","lastName") )]
-)
+//@Table(
+//    uniqueConstraints = [UniqueConstraint(name = "firstNameAndLastName", columnNames = arrayOf("firstName","lastName") )]
+//)
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

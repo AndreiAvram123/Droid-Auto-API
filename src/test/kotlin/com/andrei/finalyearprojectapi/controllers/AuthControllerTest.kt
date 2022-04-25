@@ -229,19 +229,5 @@ class AuthControllerTest : BaseIntegrationTest(){
             .andExpect(status().isBadRequest)
             .andExpect(content().string(expectedResponse))
     }
-    @Test
-    fun `Given json containing all register details , the register endpoint will return success `() {
-//        val registerData = RegisterUserRequest(
-//            firstName = test
-//        )
-//        val registerRequest = MockMvcRequestBuilders.post("/register").apply {
-//            contentType(MediaType.APPLICATION_JSON)
-//            content(gson.toJson(registerData))
-//        }
-//        mockMvc.perform(registerRequest)
-//            .andExpect(status().isCreated)
-
-    }
-
 
 }
