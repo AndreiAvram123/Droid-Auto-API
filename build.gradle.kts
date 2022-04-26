@@ -40,7 +40,7 @@ dependencies {
 
 
     //payment
-    implementation ("com.stripe:stripe-java:20.113.0")
+    implementation ("com.stripe:stripe-java:20.116.0")
 
     //email service
     implementation ("com.sendgrid:sendgrid-java:4.9.1")

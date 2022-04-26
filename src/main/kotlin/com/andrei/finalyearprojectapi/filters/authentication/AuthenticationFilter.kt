@@ -64,7 +64,8 @@ class AuthenticationFilter(
     private fun createLoginResponse(user: User): LoginResponse{
 
         val loginResponse = LoginResponse(
-            isEmailVerified = user.emailVerified
+            emailVerified = user.emailVerified,
+            identityVerified = user.identityVerified
         )
         loginResponse.apply {
             accessToken =   jwtUtils.generateAccessToken(user)

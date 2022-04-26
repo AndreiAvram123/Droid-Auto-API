@@ -12,7 +12,6 @@ import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.mock.web.MockHttpServletRequest
 
 
@@ -30,10 +29,6 @@ class AccessTokenFilterTest : BaseIntegrationTest() {
      private var mockRequest = MockHttpServletRequest()
 
      private val testUser:User = mockk()
-
-
-    @Value("\${accessToken.encryptionKey}")
-    private lateinit var signingKeyAccessToken:String
 
 
      @BeforeEach

@@ -66,6 +66,7 @@ class PaymentService(
             setConfirm(true)
             setCurrency("gbp")
         }.build()
+
         return runCatching {
             PaymentIntent.create(paymentIntentParameters)
         }.onFailure {

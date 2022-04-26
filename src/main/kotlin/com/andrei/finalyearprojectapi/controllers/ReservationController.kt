@@ -27,10 +27,17 @@ class ReservationController (
         user: User
     ):ApiResponse<Reservation>{
         val car = simpleCarRepository.findByIdOrNull(reservation.carID) ?: return noContent("No car found with this id")
+        reservationService.getUserReservation(user)?.let {
+            return errorResponse(
+                code = HttpStatus.CONFLICT ,
+                error = carNotAvailableMessage
+            )
+        }
         val reservationResult = reservationService.makeReservation(
             car = car,
             user = user
         )
+
         return when(reservationResult){
             is Response.Success -> {
                 okResponse(

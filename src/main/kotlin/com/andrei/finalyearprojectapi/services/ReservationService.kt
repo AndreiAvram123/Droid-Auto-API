@@ -29,6 +29,13 @@ class ReservationService(
         car:Car,
         user:User
     ): Response<Reservation> {
+        //this should really be called by the client before
+        //but this is a defensive check
+        val currentReservation = getUserReservation(user)
+        if(currentReservation != null){
+            return Response.Error("Reservation exists")
+        }
+
         val keyReservation = RedisKeys.userCarReservation.format(user.id)
         val keyCar = RedisKeys.car.format(car.id)
 

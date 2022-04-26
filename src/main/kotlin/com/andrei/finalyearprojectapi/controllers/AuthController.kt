@@ -33,7 +33,7 @@ class AuthController(
     ): ApiResponse<User> {
 
         val user = userRequest.toUser(passwordEncoder)
-
+        
         if(isNewUserValid(user)) {
             userRepository.save(user)
         }
