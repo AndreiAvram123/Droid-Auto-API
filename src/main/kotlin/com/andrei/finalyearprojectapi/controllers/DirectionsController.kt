@@ -21,9 +21,7 @@ class DirectionsController(
         @RequestParam startLongitude:Double,
         @RequestParam endLatitude:Double,
         @RequestParam endLongitude:Double,
-    ):ApiResponse<DirectionsResponse>{
-      return okResponse(
-          mapsService.getWalkingDirections(
+    ):ApiResponse<DirectionsResponse> = mapsService.getWalkingDirections(
               DirectionsRequest(
                   startLatitude = startLatitude,
                   startLongitude = startLongitude,
@@ -31,8 +29,6 @@ class DirectionsController(
                   endLongitude =  endLongitude
               )
           )
-      )
-    }
 
     final override fun registerController() {
         Controllers.add(this::class)

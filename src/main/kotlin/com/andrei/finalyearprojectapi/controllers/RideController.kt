@@ -28,6 +28,8 @@ class RideController(
         return okResponse(rideService.getOngoingRide(user))
     }
 
+
+
     //todo
     //check if user paid
     @PostMapping("/rides")
