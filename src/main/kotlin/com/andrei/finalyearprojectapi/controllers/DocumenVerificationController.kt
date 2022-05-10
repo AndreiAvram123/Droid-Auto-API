@@ -3,10 +3,7 @@ package com.andrei.finalyearprojectapi.controllers
 import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.models.InquiryCompleteResponseWrapper
 import com.andrei.finalyearprojectapi.repositories.UserRepository
-import com.andrei.finalyearprojectapi.utils.ApiResponse
-import com.andrei.finalyearprojectapi.utils.NoData
-import com.andrei.finalyearprojectapi.utils.badRequest
-import com.andrei.finalyearprojectapi.utils.nothing
+import com.andrei.finalyearprojectapi.utils.*
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -14,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DocumentVerificationController(
     private val userRepository: UserRepository
-) {
+):BaseRestController() {
 
 
     @PostMapping("/document/verification")
@@ -26,6 +23,10 @@ class DocumentVerificationController(
         val user = userRepository.findTopById(requestBody.data.attributes.payload.data.attributes.referenceId.toLong()) ?: return badRequest("Invalid user id")
         user.identityVerified = true
         return nothing()
+    }
+
+    override fun registerController() {
+         Controllers.add(this::class)
     }
 
 }
