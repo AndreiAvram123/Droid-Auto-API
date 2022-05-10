@@ -1,5 +1,6 @@
 package com.andrei.finalyearprojectapi.controllers
 
+import com.andrei.finalyearprojectapi.configuration.annotations.NoAuthenticationRequired
 import com.andrei.finalyearprojectapi.models.InquiryCompleteResponseWrapper
 import com.andrei.finalyearprojectapi.repositories.UserRepository
 import com.andrei.finalyearprojectapi.utils.ApiResponse
@@ -17,6 +18,7 @@ class DocumentVerificationController(
 
 
     @PostMapping("/document/verification")
+    @NoAuthenticationRequired
     fun confirmVerificationWebhook(
         @RequestBody
         requestBody: InquiryCompleteResponseWrapper
