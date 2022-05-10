@@ -21,7 +21,12 @@ class DocumentVerificationController(
         requestBody: InquiryCompleteResponseWrapper
     ):ApiResponse<NoData>{
         val user = userRepository.findTopById(requestBody.data.attributes.payload.data.attributes.referenceId.toLong()) ?: return badRequest("Invalid user id")
-        user.identityVerified = true
+        user.apply {
+            identityVerified = true
+        }.also {
+            userRepository.save(it)
+        }
+
         return nothing()
     }
 
