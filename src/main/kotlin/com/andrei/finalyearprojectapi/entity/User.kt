@@ -42,7 +42,7 @@ class User(
     val emailVerified:Boolean = false,
 
     @JsonIgnore
-    val identityVerified:Boolean = false,
+    var identityVerified:Boolean = false,
 
     @Column(
         nullable = true
