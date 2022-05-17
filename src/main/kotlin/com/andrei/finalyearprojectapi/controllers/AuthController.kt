@@ -55,12 +55,9 @@ class AuthController(
     @PostMapping("/email/verification")
     fun sendVerificationEmail(
         user:User
-    ):ApiResponse<NoData>{
-        emailService.sendVerificationEmail(
+    ):ApiResponse<NoData> = emailService.sendVerificationEmail(
            to =  Email(user.email)
         )
-        return nothing()
-    }
 
     @PostMapping("/token")
     @NoAuthenticationRequired
@@ -83,12 +80,35 @@ class AuthController(
     }
 
 
+    @GetMapping("/email/verification")
+    @NoAuthenticationRequired
+    private fun verifyEmail(
+        @RequestParam uuid:String
+    ):ApiResponse<NoData>{
+        //todo
+        //should check
+         userRepository.findTopByEmail(uuid)?.apply {
+            emailVerified = true
+        }?.also {
+            userRepository.save(it)
+         }
+
+        return nothing()
+    }
+
 
 
     @Throws(RegisterException::class)
     private fun isNewUserValid(user:User):Boolean{
         userRepository.findTopByEmail(user.email)?.let {
-            throw RegisterException(registrationMessage = errorEmailAlreadyUsed)
+            throw RegisterException(error = errorEmailAlreadyUsed)
+        }
+
+        userRepository.findTopByFirstNameAndLastName(
+            firstName = user.firstName,
+            lastName = user.lastName
+        )?.let {
+            throw RegisterException(error = errorNameUsed)
         }
 
         return true
@@ -97,6 +117,7 @@ class AuthController(
 
     companion object{
         const val errorEmailAlreadyUsed = "Email already used"
+        const val errorNameUsed = "An user with this name already exists"
     }
 
     final override fun registerController() {

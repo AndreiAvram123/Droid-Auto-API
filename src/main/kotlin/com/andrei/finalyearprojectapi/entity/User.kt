@@ -39,7 +39,7 @@ class User(
     val finishedRides:MutableList<FinishedRide> = mutableListOf(),
 
     @JsonIgnore
-    val emailVerified:Boolean = false,
+    var emailVerified:Boolean = false,
 
     @JsonIgnore
     var identityVerified:Boolean = false,

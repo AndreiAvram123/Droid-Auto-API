@@ -39,7 +39,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler(){
 
                  response.writeJsonResponse<String>(
                      badRequest(
-                         exception.registrationMessage
+                         exception.error
                      )
                  )
              }

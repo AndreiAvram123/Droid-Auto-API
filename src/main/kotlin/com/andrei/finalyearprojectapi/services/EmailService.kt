@@ -1,5 +1,9 @@
 package com.andrei.finalyearprojectapi.services
 
+import com.andrei.finalyearprojectapi.utils.ApiResponse
+import com.andrei.finalyearprojectapi.utils.NoData
+import com.andrei.finalyearprojectapi.utils.errorResponse
+import com.andrei.finalyearprojectapi.utils.nothing
 import com.sendgrid.Method
 import com.sendgrid.Request
 import com.sendgrid.SendGrid
@@ -7,6 +11,7 @@ import com.sendgrid.helpers.mail.Mail
 import com.sendgrid.helpers.mail.objects.Email
 import com.sendgrid.helpers.mail.objects.Personalization
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 
@@ -22,16 +27,23 @@ class EmailService(
 
     fun sendVerificationEmail(
         to:Email
-    ){
+    ):ApiResponse<NoData>{
 
         val mail = Mail().apply {
             subject = "Verify your email"
             templateId = confirmationEmailTemplateID
             from = Email(fromIdentity)
         }
+
+        val confirmationEmailData = ConfirmationEmailData(
+            confirmURL = "https://car-rental-api-dev.herokuapp.com/email/verification?uuid=${to.email}"
+        )
         val personalization = Personalization().apply {
             addTo(to)
+
+            addDynamicTemplateData(ConfirmationEmailData.confirmURLKey,confirmationEmailData.confirmURL)
         }
+
         mail.addPersonalization(personalization)
 
         val request = Request().apply {
@@ -40,11 +52,23 @@ class EmailService(
             body = mail.build()
 
         }
-        try{
-          val response = sendGrid.api(request)
+        return try{
+            val response = sendGrid.api(request)
+            nothing()
         }catch (e:Exception){
-            print(e)
+            errorResponse(
+                code = HttpStatus.INTERNAL_SERVER_ERROR,
+                error =  e.localizedMessage ?: "Unknown error")
         }
         }
 
+
+     class ConfirmationEmailData(
+          val confirmURL:String
+    ){
+
+        companion object{
+             const val confirmURLKey:String = "confirmURL"
+        }
+    }
 }
